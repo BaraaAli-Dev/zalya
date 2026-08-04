@@ -22,14 +22,14 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => 'The provided data does not match our records.',
             ])->onlyInput('email');
         }
 
-        if (Auth::user()->role !== 'admin') {
-            Auth::logout();
+        if (Auth::guard('admin')->user()->role !== 'admin') {
+            Auth::guard('admin')->logout();
             return back()->withErrors([
                 'email' => 'You do not have permission to access this area.',
             ]);
@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');

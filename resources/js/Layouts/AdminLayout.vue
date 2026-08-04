@@ -1,14 +1,16 @@
 <script setup>
+import FlashMessage from "@/Components/FlashMessage.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
+import logo from "@/assets/images/logo.png";
 
 const page = usePage();
 
 const links = [
     { label: "Home", route: "admin.dashboard" },
-    { label: "Products", route: "#" },
-    { label: "Categories", route: "#" },
-    { label: "Orders", route: "#" },
+    { label: "Products", route: "admin.products.index" },
+    { label: "Categories", route: "admin.categories.index" },
+    { label: "Orders", route: "admin.orders" },
 ];
 
 const isActive = (routeName) => {
@@ -17,11 +19,13 @@ const isActive = (routeName) => {
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-brand-50/20">
+    <div class="flex h-screen overflow-hidden bg-brand-50/20">
         <!-- Sidebar -->
-        <aside class="w-64 bg-brand-900 text-white p-6 flex flex-col">
+        <aside class="w-64 bg-brand-900 text-white p-6 flex flex-col overflow-y-auto">
+
             <h2 class="text-xl font-bold mb-10 text-brand-50">
-                Zalya Control Panel
+                <img :src="logo" alt="Zalya Logo" class="h-10 w-10 inline-block mr-2" />
+                Zalya Dashboard
             </h2>
 
             <nav class="space-y-1 flex-1">
@@ -46,11 +50,12 @@ const isActive = (routeName) => {
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col overflow-hidden">
             <header
-                class="bg-white shadow-sm border-b border-brand-100 p-4 flex justify-between items-center"
+                class="bg-white shadow-sm border-b border-brand-100 p-4 flex justify-between items-center flex-shrink-0"
             >
                 <h1 class="text-lg font-semibold text-brand-700">
+                    <img :src="logo" alt="Zalya Logo" class="h-10 w-10 inline-block mr-2" />
                     Hello, {{ page.props.auth.user.name }}!
                 </h1>
 
@@ -64,7 +69,8 @@ const isActive = (routeName) => {
                 </Link>
             </header>
 
-            <main class="p-6 flex-1">
+            <main class="p-6 flex-1 overflow-y-auto">
+                <FlashMessage />
                 <slot />
             </main>
         </div>

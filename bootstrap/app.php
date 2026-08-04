@@ -18,9 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticatedCustom::class,
         ]);
 
-        //
+        $middleware->redirectGuestsTo(function ($request) {
+            return $request->is('admin/*')
+                ? route('admin.login')
+                : route('login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

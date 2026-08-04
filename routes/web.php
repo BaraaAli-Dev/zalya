@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\AuthenticatedSessionController as AdminAuthController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -29,15 +31,27 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::middleware('guest')->group(function () {
+    Route::middleware('guest:admin')->group(function () {
         Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
         Route::post('/login', [AdminAuthController::class, 'store']);
     });
 
-    Route::middleware(['auth', 'admin'])->group(function () {
+    Route::middleware(['auth:admin', 'admin'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('Admin/Dashboard');
         })->name('dashboard');
+
+        Route::get('/products', function () {
+            return Inertia::render('Admin/Products');
+        })->name('products');
+
+        Route::resource('categories', CategoryController::class);
+
+        Route::resource('products', ProductController::class);
+
+        Route::get('/orders', function () {
+            return Inertia::render('Admin/Orders');
+        })->name('orders');
 
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
     });
