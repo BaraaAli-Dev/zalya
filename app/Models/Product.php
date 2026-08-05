@@ -18,10 +18,14 @@ class Product extends Model
         'slug',
         'gender',
         'images',
+        'is_best_seller',
+        'is_featured',
     ];
 
     protected $casts = [
         'images' => 'array',
+        'is_best_seller' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     public function category()

@@ -7,15 +7,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\Admin\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\StorefrontController;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [StorefrontController::class, 'home'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
