@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Inertia\Inertia;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category')->orderBy('id', 'desc')->paginate(10);
+        $products = Product::with('category', 'variants')->orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,
@@ -32,34 +34,56 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'size' => 'required|string|max:50',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'stock' => 'required|integer|min:0',
             'gender' => 'required|in:men,women,unisex',
+            'is_featured' => 'boolean',
+            'is_best_seller' => 'boolean',
+            'variants' => 'required|array|min:1',
+            'variants.*.size' => 'required|string|max:50',
+            'variants.*.price' => 'required|numeric|min:0',
+            'variants.*.stock' => 'required|integer|min:0',
             'order' => 'nullable|array',
             'order.*' => 'in:existing,new',
             'new_images' => 'nullable|array',
             'new_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['product_name']);
-        $validated['images'] = $this->buildImagesArray($request);
+        $slug = Str::slug($validated['product_name']);
+        $images = $this->buildImagesArray($request);
 
-        Product::create($validated);
+        $product = DB::transaction(function () use ($validated, $slug, $images) {
+            $product = Product::create([
+                'product_name' => $validated['product_name'],
+                'description' => $validated['description'],
+                'category_id' => $validated['category_id'],
+                'gender' => $validated['gender'],
+                'is_featured' => $validated['is_featured'] ?? false,
+                'is_best_seller' => $validated['is_best_seller'] ?? false,
+                'slug' => $slug,
+                'images' => $images,
+            ]);
+
+            foreach ($validated['variants'] as $variant) {
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'size' => $variant['size'],
+                    'price' => $variant['price'],
+                    'stock' => $variant['stock'],
+                ]);
+            }
+
+            return $product;
+        });
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
 
-    public function show(string $id)
-    {
-        //
-    }
-
     public function edit(Product $product)
     {
+        $product->load('variants');
+
         return Inertia::render('Admin/Products/Edit', [
             'product' => $product,
             'categories' => Category::select('id', 'name')->get(),
@@ -70,12 +94,16 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'size' => 'required|string|max:50',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'stock' => 'required|integer|min:0',
             'gender' => 'required|in:men,women,unisex',
+            'is_featured' => 'boolean',
+            'is_best_seller' => 'boolean',
+            'variants' => 'required|array|min:1',
+            'variants.*.id' => 'nullable|exists:product_variants,id',
+            'variants.*.size' => 'required|string|max:50',
+            'variants.*.price' => 'required|numeric|min:0',
+            'variants.*.stock' => 'required|integer|min:0',
             'order' => 'nullable|array',
             'order.*' => 'in:existing,new',
             'existing_images' => 'nullable|array',
@@ -83,7 +111,7 @@ class ProductController extends Controller
             'new_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['product_name']);
+        $slug = Str::slug($validated['product_name']);
         $newImagesList = $this->buildImagesArray($request);
 
         foreach ($product->images ?? [] as $oldImage) {
@@ -92,9 +120,32 @@ class ProductController extends Controller
             }
         }
 
-        $validated['images'] = $newImagesList;
+        DB::transaction(function () use ($validated, $slug, $newImagesList, $product) {
+            $product->update([
+                'product_name' => $validated['product_name'],
+                'description' => $validated['description'],
+                'category_id' => $validated['category_id'],
+                'gender' => $validated['gender'],
+                'is_featured' => $validated['is_featured'] ?? false,
+                'is_best_seller' => $validated['is_best_seller'] ?? false,
+                'slug' => $slug,
+                'images' => $newImagesList,
+            ]);
 
-        $product->update($validated);
+            $keepIds = collect($validated['variants'])->pluck('id')->filter()->all();
+            $product->variants()->whereNotIn('id', $keepIds)->delete();
+
+            foreach ($validated['variants'] as $variant) {
+                $product->variants()->updateOrCreate(
+                    ['id' => $variant['id'] ?? null],
+                    [
+                        'size' => $variant['size'],
+                        'price' => $variant['price'],
+                        'stock' => $variant['stock'],
+                    ]
+                );
+            }
+        });
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully.');
@@ -111,7 +162,6 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
     }
-
 
     private function buildImagesArray(Request $request): array
     {

@@ -8,24 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'product_name',
-        'price',
-        'size',
         'description',
         'category_id',
-        'stock',
         'slug',
         'gender',
         'images',
-        'is_best_seller',
         'is_featured',
+        'is_best_seller',
     ];
 
     protected $casts = [
         'images' => 'array',
-        'is_best_seller' => 'boolean',
         'is_featured' => 'boolean',
+        'is_best_seller' => 'boolean',
     ];
 
     public function category()
@@ -36,5 +34,20 @@ class Product extends Model
     public function order_items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function getMinPriceAttribute()
+    {
+        return $this->variants->min('price');
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return $this->variants->sum('stock');
     }
 }

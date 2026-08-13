@@ -1,79 +1,158 @@
 <script setup>
-import StoreLayout from '@/Layouts/StoreLayout.vue';
-import ProductCard from '@/Components/ProductCard.vue';
-import { Link } from '@inertiajs/vue3';
+import StoreLayout from "@/Layouts/StoreLayout.vue";
+import ProductCard from "@/Components/ProductCard.vue";
+import { Head, Link, router } from "@inertiajs/vue3";
 
-defineOptions({ layout: StoreLayout });
-
-defineProps({
-    featuredProducts: Array,
-    bestSellers: Array,
-    newArrivals: Array,
+const props = defineProps({
+    products: Object,
     categories: Array,
+    filters: Object,
 });
+
+const applyFilter = (key, value) => {
+    router.get(
+        route("home"),
+        {
+            category: key === "category" ? value : props.filters.category,
+            gender: key === "gender" ? value : props.filters.gender,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        },
+    );
+};
+
+const clearFilters = () => {
+    router.get(route("home"), {}, { preserveScroll: true });
+};
 </script>
 
 <template>
     <Head title="Zalya | Unforgettable Fragrance" />
 
-    <!-- Hero Section -->
-    <section class="bg-brand-900 text-white">
-        <div class="max-w-7xl mx-auto px-6 py-24 text-center">
-            <p class="text-brand-100 tracking-[0.3em] text-sm mb-4">ZALYA PERFUME</p>
-            <h1 class="text-4xl md:text-6xl font-bold mb-6">Unforgettable Fragrance</h1>
-            <p class="text-brand-100 max-w-xl mx-auto mb-8">
-                Discover scents crafted to leave a lasting impression, made with love, just for you.
-            </p>
-            <Link
-                href="#featured"
-                class="inline-block bg-brand-50 text-brand-900 px-8 py-3 rounded-md font-medium hover:bg-white transition-colors"
+    <StoreLayout>
+        <!-- Hero Section -->
+        <section class="bg-brand-900 text-white">
+            <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+                <p class="text-brand-100 tracking-[0.3em] text-xs mb-4">
+                    ZALYA PERFUME
+                </p>
+                <h1 class="text-3xl md:text-5xl font-bold mb-5">
+                    Unforgettable Fragrance
+                </h1>
+                <p class="text-brand-100 max-w-xl mx-auto">
+                    Discover scents crafted to leave a lasting impression, made
+                    with love, just for you.
+                </p>
+            </div>
+        </section>
+
+        <!-- Filter Bar -->
+        <!-- Filter Bar -->
+        <section
+            class="border-b border-brand-100 bg-white sticky top-[73px] z-40"
+        >
+            <div
+                class="max-w-7xl mx-auto px-4 md:px-6 py-3 flex flex-wrap items-center gap-3"
             >
-                Shop Now
-            </Link>
-        </div>
-    </section>
+                <!-- Category Dropdown -->
+                <div class="flex items-center gap-2">
+                    <label class="text-sm font-medium text-brand-900 shrink-0"
+                        >Category:</label
+                    >
+                    <select
+                        :value="filters.category || ''"
+                        @change="applyFilter('category', $event.target.value)"
+                        class="border border-brand-100 rounded-md pl-3 pr-8 py-1.5 text-sm text-brand-900 focus:outline-none focus:ring-2 focus:ring-brand-600 min-w-[180px]"
+                    >
+                        <option value="">All Categories</option>
+                        <option
+                            v-for="cat in categories"
+                            :key="cat.id"
+                            :value="cat.id"
+                        >
+                            {{ cat.name }}
+                        </option>
+                    </select>
+                </div>
 
-    <!-- Featured Products -->
-    <section id="featured" class="max-w-7xl mx-auto px-6 py-16" v-if="featuredProducts.length">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-bold text-brand-900">Featured</h2>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <ProductCard v-for="product in featuredProducts" :key="product.id" :product="product" />
-        </div>
-    </section>
+                <span class="w-px h-5 bg-brand-100 hidden sm:block"></span>
 
-    <!-- Best Sellers -->
-    <section class="bg-brand-50/30 py-16" v-if="bestSellers.length">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-2xl font-bold text-brand-900 mb-8">Best Sellers</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <ProductCard v-for="product in bestSellers" :key="product.id" :product="product" />
+                <!-- Gender Pills (fixed, always visible) -->
+                <div class="flex items-center gap-2">
+                    <button
+                        @click="applyFilter('gender', '')"
+                        class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+                        :class="
+                            !filters.gender
+                                ? 'bg-brand-700 text-white'
+                                : 'bg-brand-50 text-brand-900 hover:bg-brand-100'
+                        "
+                    >
+                        All
+                    </button>
+                    <button
+                        v-for="g in ['men', 'women', 'unisex']"
+                        :key="g"
+                        @click="applyFilter('gender', g)"
+                        class="px-3 py-1.5 rounded-full text-xs font-medium transition-colors capitalize"
+                        :class="
+                            filters.gender === g
+                                ? 'bg-brand-700 text-white'
+                                : 'bg-brand-50 text-brand-900 hover:bg-brand-100'
+                        "
+                    >
+                        {{ g }}
+                    </button>
+                </div>
+
+                <button
+                    v-if="filters.category || filters.gender"
+                    @click="clearFilters"
+                    class="ml-auto text-xs text-red-600 hover:underline shrink-0"
+                >
+                    Clear filters
+                </button>
+            </div>
+        </section>
+
+        <!-- Products Grid -->
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div
+                v-if="products.data.length"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"
+            >
+                <ProductCard
+                    v-for="product in products.data"
+                    :key="product.id"
+                    :product="product"
+                />
+            </div>
+
+            <div v-else class="text-center py-24 text-brand-600">
+                No products match your filters.
+            </div>
+
+            <div
+                class="mt-10 flex justify-center gap-1"
+                v-if="products.links.length > 3"
+            >
+                <Link
+                    v-for="(link, index) in products.links"
+                    :key="index"
+                    :href="link.url || '#'"
+                    v-html="link.label"
+                    class="px-3 py-1.5 rounded-md text-sm transition-colors duration-150"
+                    :class="[
+                        link.active
+                            ? 'bg-brand-700 text-white'
+                            : 'text-gray-600 hover:bg-brand-50',
+                        !link.url && 'opacity-40 cursor-not-allowed',
+                    ]"
+                />
             </div>
         </div>
-    </section>
-
-    <!-- Shop by Category -->
-    <section class="max-w-7xl mx-auto px-6 py-16" v-if="categories.length">
-        <h2 class="text-2xl font-bold text-brand-900 mb-8">Shop by Category</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link
-                v-for="category in categories"
-                :key="category.id"
-                href="#"
-                class="bg-brand-900 text-white rounded-lg p-6 text-center hover:bg-brand-800 transition-colors"
-            >
-                <p class="font-medium">{{ category.name }}</p>
-                <p class="text-brand-100 text-xs mt-1">{{ category.products_count }} Products</p>
-            </Link>
-        </div>
-    </section>
-
-    <!-- New Arrivals -->
-    <section class="max-w-7xl mx-auto px-6 py-16" v-if="newArrivals.length">
-        <h2 class="text-2xl font-bold text-brand-900 mb-8">New Arrivals</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <ProductCard v-for="product in newArrivals" :key="product.id" :product="product" />
-        </div>
-    </section>
+    </StoreLayout>
 </template>

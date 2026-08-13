@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
         'total_price',
         'status',
         'address_id',
+        'shipping_street',
+        'shipping_city',
+        'shipping_state',
+        'shipping_country',
         'payment_method',
         'payment_status',
     ];
@@ -25,10 +33,5 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
-    }
-
-    public function address()
-    {
-        return $this->hasOne(Address::class);
     }
 }

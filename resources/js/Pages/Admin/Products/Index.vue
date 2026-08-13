@@ -1,6 +1,6 @@
 <script setup>
-import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Link, router } from '@inertiajs/vue3';
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { Link, router } from "@inertiajs/vue3";
 
 defineOptions({ layout: AdminLayout });
 
@@ -9,13 +9,30 @@ const props = defineProps({
 });
 
 const deleteProduct = (product) => {
-    if (confirm(`Are you sure you want to delete "${product.product_name}"? This action cannot be undone.`)) {
-        router.delete(route('admin.products.destroy', product.id));
+    if (
+        confirm(
+            `Are you sure you want to delete "${product.product_name}"? This action cannot be undone.`,
+        )
+    ) {
+        router.delete(route("admin.products.destroy", product.id));
     }
 };
 
 const genderLabel = (gender) => {
-    return { men: 'Men', women: 'Women', unisex: 'Unisex' }[gender] ?? gender;
+    return { men: "Men", women: "Women", unisex: "Unisex" }[gender] ?? gender;
+};
+
+const priceRange = (variants) => {
+    if (!variants || variants.length === 0) return "—";
+    const prices = variants.map((v) => Number(v.price));
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    return min === max ? `${min} EGP` : `${min} - ${max} EGP`;
+};
+
+const totalStock = (variants) => {
+    if (!variants) return 0;
+    return variants.reduce((sum, v) => sum + Number(v.stock), 0);
 };
 </script>
 
@@ -31,19 +48,27 @@ const genderLabel = (gender) => {
             </Link>
         </div>
 
-        <div class="bg-white rounded-lg border border-brand-100 overflow-hidden">
+        <div
+            class="bg-white rounded-lg border border-brand-100 overflow-hidden"
+        >
             <table class="w-full text-sm">
                 <thead class="bg-brand-50 text-brand-900">
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">#</th>
                         <th class="text-left px-4 py-3 font-semibold">Image</th>
                         <th class="text-left px-4 py-3 font-semibold">Name</th>
-                        <th class="text-left px-4 py-3 font-semibold">Category</th>
-                        <th class="text-left px-4 py-3 font-semibold">Gender</th>
-                        <th class="text-left px-4 py-3 font-semibold">Size</th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            Category
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            Gender
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">Sizes</th>
                         <th class="text-left px-4 py-3 font-semibold">Price</th>
                         <th class="text-left px-4 py-3 font-semibold">Stock</th>
-                        <th class="text-left px-4 py-3 font-semibold">Actions</th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,7 +77,9 @@ const genderLabel = (gender) => {
                         :key="product.id"
                         class="border-t border-brand-100"
                     >
-                        <td class="px-4 py-3 text-brand-600">{{ product.id }}</td>
+                        <td class="px-4 py-3 text-brand-600">
+                            {{ product.id }}
+                        </td>
                         <td class="px-4 py-3">
                             <img
                                 v-if="product.images?.length"
@@ -76,13 +103,15 @@ const genderLabel = (gender) => {
                             {{ genderLabel(product.gender) }}
                         </td>
                         <td class="px-4 py-3 text-brand-600">
-                            {{ product.size }}
+                            {{
+                                product.variants?.map((v) => v.size).join(", ")
+                            }}
                         </td>
                         <td class="px-4 py-3 text-brand-600">
-                            {{ product.price }} EGP
+                            {{ priceRange(product.variants) }}
                         </td>
                         <td class="px-4 py-3 text-brand-600">
-                            {{ product.stock }}
+                            {{ totalStock(product.variants) }}
                         </td>
                         <td class="px-4 py-3 space-x-3">
                             <Link
@@ -99,12 +128,23 @@ const genderLabel = (gender) => {
                             </button>
                         </td>
                     </tr>
+
+                    <tr v-if="products.data.length === 0">
+                        <td
+                            colspan="9"
+                            class="px-4 py-10 text-center text-brand-400"
+                        >
+                            No products found.
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="flex justify-center mt-6 space-x-1">
+        <div
+            v-if="products.data.length > 0 && products.links.length > 3"
+            class="flex justify-center mt-6 space-x-1"
+        >
             <Link
                 v-for="(link, i) in products.links"
                 :key="i"

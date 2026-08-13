@@ -2,30 +2,26 @@
 
 namespace Database\Factories;
 
-use App\Models\Order;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
-use App\Models\Address;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Order>
- */
 class OrderFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
             'user_id' => User::factory(),
-            'total_price' => $this->faker->randomFloat(2, 10, 1000),
+            'customer_name' => $this->faker->name(),
+            'customer_email' => $this->faker->safeEmail(),
+            'customer_phone' => $this->faker->numerify('01#########'),
+            'total_price' => $this->faker->randomFloat(2, 100, 3000),
             'status' => $this->faker->randomElement(['pending', 'processing', 'delivered', 'cancelled']),
-            'address_id' => Address::factory(),
-            'payment_method' => $this->faker->randomElement(['credit_card', 'paypal', 'bank_transfer']),
-            'payment_status' => $this->faker->randomElement(['paid', 'unpaid']),
+            'shipping_street' => $this->faker->streetAddress(),
+            'shipping_city' => $this->faker->city(),
+            'shipping_state' => $this->faker->state(),
+            'shipping_country' => 'Egypt',
+            'payment_method' => 'cash_on_delivery',
+            'payment_status' => $this->faker->randomElement(['unpaid', 'paid']),
         ];
     }
 }

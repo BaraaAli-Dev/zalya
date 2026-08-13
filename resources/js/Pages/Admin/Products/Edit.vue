@@ -1,7 +1,8 @@
 <script setup>
-import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Link, useForm } from '@inertiajs/vue3';
-import ImageManager from '@/Components/Admin/ImageManager.vue';
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { Link, useForm } from "@inertiajs/vue3";
+import ImageManager from "@/Components/Admin/ImageManager.vue";
+import VariantsManager from "@/Components/Admin/VariantsManager.vue";
 
 defineOptions({ layout: AdminLayout });
 
@@ -12,16 +13,21 @@ const props = defineProps({
 
 const form = useForm({
     product_name: props.product.product_name,
-    price: props.product.price,
-    size: props.product.size,
     description: props.product.description,
     category_id: props.product.category_id,
-    stock: props.product.stock,
     gender: props.product.gender,
+    is_featured: props.product.is_featured,
+    is_best_seller: props.product.is_best_seller,
+    variants: props.product.variants.map((v) => ({
+        id: v.id,
+        size: v.size,
+        price: v.price,
+        stock: v.stock,
+    })),
     order: [],
     existing_images: [],
     new_images: [],
-    _method: 'put',
+    _method: "put",
 });
 
 const onImagesChange = ({ order, existing_images, new_images }) => {
@@ -31,81 +37,81 @@ const onImagesChange = ({ order, existing_images, new_images }) => {
 };
 
 const submit = () => {
-    form.post(route('admin.products.update', props.product.id));
+    form.post(route("admin.products.update", props.product.id));
 };
 </script>
 
 <template>
     <div class="max-w-2xl mx-auto">
-        <form @submit.prevent="submit" class="bg-white rounded-lg border border-brand-100 p-6 space-y-5">
+        <form
+            @submit.prevent="submit"
+            class="bg-white rounded-lg border border-brand-100 p-6 space-y-5"
+        >
             <h1 class="text-2xl font-bold text-brand-900 mb-6">Edit Product</h1>
 
             <div>
-                <label class="block text-sm font-medium text-brand-900 mb-1">Product Name</label>
+                <label class="block text-sm font-medium text-brand-900 mb-1"
+                    >Product Name</label
+                >
                 <input
                     v-model="form.product_name"
                     type="text"
                     class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
                 />
-                <p v-if="form.errors.product_name" class="text-red-600 text-xs mt-1">
+                <p
+                    v-if="form.errors.product_name"
+                    class="text-red-600 text-xs mt-1"
+                >
                     {{ form.errors.product_name }}
                 </p>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-brand-900 mb-1">Price</label>
-                    <input
-                        v-model="form.price"
-                        type="number"
-                        step="0.01"
-                        class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
-                    />
-                    <p v-if="form.errors.price" class="text-red-600 text-xs mt-1">{{ form.errors.price }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-brand-900 mb-1">Size</label>
-                    <input
-                        v-model="form.size"
-                        type="text"
-                        placeholder="e.g. 100ml"
-                        class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
-                    />
-                    <p v-if="form.errors.size" class="text-red-600 text-xs mt-1">{{ form.errors.size }}</p>
-                </div>
-            </div>
-
             <div>
-                <label class="block text-sm font-medium text-brand-900 mb-1">Description</label>
+                <label class="block text-sm font-medium text-brand-900 mb-1"
+                    >Description</label
+                >
                 <textarea
                     v-model="form.description"
                     rows="4"
                     class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
                 ></textarea>
-                <p v-if="form.errors.description" class="text-red-600 text-xs mt-1">
+                <p
+                    v-if="form.errors.description"
+                    class="text-red-600 text-xs mt-1"
+                >
                     {{ form.errors.description }}
                 </p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-brand-900 mb-1">Category</label>
+                    <label class="block text-sm font-medium text-brand-900 mb-1"
+                        >Category</label
+                    >
                     <select
                         v-model="form.category_id"
                         class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
                     >
-                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                        <option
+                            v-for="cat in categories"
+                            :key="cat.id"
+                            :value="cat.id"
+                        >
                             {{ cat.name }}
                         </option>
                     </select>
-                    <p v-if="form.errors.category_id" class="text-red-600 text-xs mt-1">
+                    <p
+                        v-if="form.errors.category_id"
+                        class="text-red-600 text-xs mt-1"
+                    >
                         {{ form.errors.category_id }}
                     </p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-brand-900 mb-1">Gender</label>
+                    <label class="block text-sm font-medium text-brand-900 mb-1"
+                        >Gender</label
+                    >
                     <select
                         v-model="form.gender"
                         class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
@@ -118,19 +124,49 @@ const submit = () => {
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-brand-900 mb-1">Stock</label>
-                <input
-                    v-model="form.stock"
-                    type="number"
-                    class="w-full border border-brand-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-600"
-                />
-                <p v-if="form.errors.stock" class="text-red-600 text-xs mt-1">{{ form.errors.stock }}</p>
+                <label class="block text-sm font-medium text-brand-900 mb-2"
+                    >Sizes & Pricing</label
+                >
+                <VariantsManager v-model="form.variants" />
+                <p
+                    v-if="form.errors.variants"
+                    class="text-red-600 text-xs mt-1"
+                >
+                    {{ form.errors.variants }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 text-sm text-brand-900">
+                    <input
+                        v-model="form.is_featured"
+                        type="checkbox"
+                        class="rounded border-brand-100 text-brand-700 focus:ring-brand-600"
+                    />
+                    Featured Product
+                </label>
+                <label class="flex items-center gap-2 text-sm text-brand-900">
+                    <input
+                        v-model="form.is_best_seller"
+                        type="checkbox"
+                        class="rounded border-brand-100 text-brand-700 focus:ring-brand-600"
+                    />
+                    Best Seller
+                </label>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-brand-900 mb-1">Images</label>
-                <ImageManager :existing-images="product.images ?? []" @change="onImagesChange" />
-                <p v-if="form.errors.new_images" class="text-red-600 text-xs mt-1">
+                <label class="block text-sm font-medium text-brand-900 mb-1"
+                    >Images</label
+                >
+                <ImageManager
+                    :existing-images="product.images ?? []"
+                    @change="onImagesChange"
+                />
+                <p
+                    v-if="form.errors.new_images"
+                    class="text-red-600 text-xs mt-1"
+                >
                     {{ form.errors.new_images }}
                 </p>
             </div>
@@ -143,7 +179,10 @@ const submit = () => {
                 >
                     Update Product
                 </button>
-                <Link :href="route('admin.products.index')" class="text-brand-600 text-sm hover:underline">
+                <Link
+                    :href="route('admin.products.index')"
+                    class="text-brand-600 text-sm hover:underline"
+                >
                     Cancel
                 </Link>
             </div>
