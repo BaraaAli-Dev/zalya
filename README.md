@@ -1,59 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Zalya — Perfume E-Commerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A full-stack e-commerce web application built with **Laravel 12**, **Inertia.js**, and **Vue 3**, for a fragrance/perfume brand. This project includes a complete customer-facing storefront and a separate admin dashboard for managing products, categories, and orders.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12 (PHP 8.2) |
+| Frontend | Vue 3 + Inertia.js |
+| Styling | Tailwind CSS |
+| Database | MySQL |
+| Auth | Laravel Breeze (customer) + custom guard (admin) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Project Structure & Key Concepts
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Dual Authentication System
+The project uses **two separate Laravel auth guards**:
+- `web` — for regular customers (`/login`, `/register`)
+- `admin` — for the admin dashboard (`/admin/login`)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+These guards use **independent sessions**, meaning a customer and an admin can be logged in simultaneously from different browsers/devices without interfering with each other. The `role` column on the `users` table (`admin` / `customer`) is checked on every admin login attempt as an extra safeguard.
 
-## Laravel Sponsors
+Admin routes are fully separated under `routes/web.php`, grouped under `prefix('admin')->name('admin.')`, and protected by the `auth:admin` + custom `IsAdmin` middleware.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. Product Variants (Sizes)
+Products support **multiple sizes**, each with its own price and stock, via a `product_variants` table:
+```
+products (name, description, images, category, gender)
+    └── product_variants (size, price, stock)
+```
+- If a product has **only one size**, the storefront skips the size-selection step and allows adding to cart directly.
+- If a product has **multiple sizes**, the customer must select a size on the product page before adding to cart.
 
-### Premium Partners
+### 3. Stock Management (Important — Read This)
+Stock is **only decremented at checkout confirmation**, not when an item is added to the cart. This prevents "stock leaks" where abandoned carts would permanently reduce available inventory. The checkout process uses a database transaction with row locking (`lockForUpdate`) to safely handle concurrent purchases of the same item.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Cart System
+The cart is **session-based** (not database-based), which means:
+- Guests can add items to the cart without an account.
+- The cart is tied to the browser session and is cleared after checkout or when the session expires.
 
-## Contributing
+### 5. Guest Checkout
+Customers can complete a purchase **without creating an account**. Shipping and contact details are stored directly on the `orders` table (not linked to a saved `addresses` record), so historical orders remain accurate even if a logged-in customer later changes their profile info.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## What's Included
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- ✅ Admin dashboard (stats, low stock alerts, recent orders)
+- ✅ Product management with multiple sizes/variants and multi-image upload (with drag-to-reorder & "set as main image")
+- ✅ Category management
+- ✅ Order management (view, update status, delete)
+- ✅ Storefront homepage with category/gender filtering
+- ✅ Live product search
+- ✅ Product detail pages with size selection
+- ✅ Slide-out cart drawer
+- ✅ Guest & authenticated checkout
+- ✅ Customer account area (dashboard, order history, profile)
+- ✅ Order confirmation emails (Markdown mail template)
 
-## Security Vulnerabilities
+## What's NOT Included (You'll Need to Add These)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- ❌ **Real payment gateway** — only "Cash on Delivery" is implemented. You'll need to integrate a provider (e.g. Paymob, Fawry, Stripe) before accepting real payments.
+- ❌ **Production email service** — `.env` is currently set to `MAIL_MAILER=log` for local testing. You must configure a real SMTP provider (Mailtrap for staging, SendGrid/Postmark for production) before going live.
+- ❌ **Automated tests** — no Feature/Unit test suite has been written yet.
+- ❌ **Saved address book** — the `addresses` table exists but has no UI built for it; customers currently re-enter shipping info at every checkout.
+- ❌ **Load testing** — the app has not been tested under real production traffic.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Local Setup
+
+```bash
+# Install dependencies
+composer install
+npm install
+
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# Configure your database in .env, then:
+php artisan migrate --seed
+php artisan storage:link
+
+# Run the app
+php artisan serve
+npm run dev
+```
+
+### Default Seeded Admin Account
+After seeding, manually update a user's `role` column to `admin` in the database to access `/admin/login`, or create one via `php artisan tinker`.
+
+---
+
+## Before Deploying to Production
+
+1. Set `APP_DEBUG=false` and `APP_ENV=production` in `.env`.
+2. Configure a real `MAIL_MAILER` (see above).
+3. Integrate a real payment gateway if accepting online payments.
+4. Never commit your `.env` file — ensure it's in `.gitignore`.
+5. Review and adjust `SESSION_DRIVER` (currently supports both `file` and `database`; run `php artisan migrate` for the `sessions` table if using `database`).
+6. Set up a queue worker (`php artisan queue:work`) if you switch mail sending to `ShouldQueue` for better performance under load.
+7. Run `npm run build` (not `npm run dev`) for production assets.
+
+---
+
+## Brand Colors (Tailwind config)
+
+Defined in `tailwind.config.js` under the `brand` color palette (`brand-50` through `brand-900`), based on the Zalya brand identity (`#3A4E3F` deep green, `#F5C99C` warm beige).
+
+---
+
+## License / Ownership
+
+This codebase is provided as a **starter structure**, not a finished, ready-to-sell product. Please review the "What's NOT Included" section above carefully before launching a live store with real customers and payments.
