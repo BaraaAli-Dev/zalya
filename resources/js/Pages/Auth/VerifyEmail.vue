@@ -22,7 +22,7 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-    <Head title="Email Verification" />
+    <Head title="تأكيد البريد الإلكتروني" />
 
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-brand-50/30 px-4"
@@ -37,18 +37,17 @@ const verificationLinkSent = computed(
             </div>
 
             <p class="mb-4 text-sm text-brand-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
+                شكرًا لتسجيلك! قبل البدء، يرجى تأكيد بريدك الإلكتروني بالضغط على
+                الرابط الذي أرسلناه إليك. إذا لم يصلك البريد، سنرسل رابطًا
+                جديدًا بكل سرور.
             </p>
 
             <div
                 v-if="verificationLinkSent"
                 class="mb-4 text-sm font-medium text-green-600"
             >
-                A new verification link has been sent to the email address you
-                provided during registration.
+                تم إرسال رابط تأكيد جديد إلى البريد الإلكتروني الذي قدمته عند
+                التسجيل.
             </div>
 
             <form @submit.prevent="submit">
@@ -57,7 +56,7 @@ const verificationLinkSent = computed(
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Resend Verification Email
+                        إعادة إرسال بريد التأكيد
                     </PrimaryButton>
 
                     <Link
@@ -66,7 +65,7 @@ const verificationLinkSent = computed(
                         as="button"
                         class="text-sm text-brand-600 hover:text-brand-800 underline"
                     >
-                        Log Out
+                        تسجيل الخروج
                     </Link>
                 </div>
             </form>

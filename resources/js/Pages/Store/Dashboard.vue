@@ -19,30 +19,38 @@ const statusColor = (status) => {
         }[status] ?? "bg-gray-50 text-gray-700"
     );
 };
+
+const statusLabel = (status) =>
+    ({
+        pending: "قيد الانتظار",
+        processing: "قيد التجهيز",
+        delivered: "تم التوصيل",
+        cancelled: "ملغي",
+    })[status] ?? status;
 </script>
 
 <template>
-    <Head title="My Account | Zalya" />
+    <Head title="حسابي | Zalya" />
 
     <StoreLayout>
         <div class="max-w-4xl mx-auto px-4 md:px-6 py-10">
             <h1 class="text-2xl font-bold text-brand-900 mb-1">
-                Welcome back, {{ page.props.auth.user.name }} 👋
+                مرحبًا بعودتك، {{ page.props.auth.user.name }} 👋
             </h1>
             <p class="text-sm text-brand-600 mb-8">
-                Here's a quick overview of your account.
+                إليك نظرة سريعة على حسابك.
             </p>
 
             <!-- Stats -->
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div class="bg-white border border-brand-100 rounded-lg p-5">
-                    <p class="text-xs text-brand-500 mb-1">Total Orders</p>
+                    <p class="text-xs text-brand-500 mb-1">إجمالي الطلبات</p>
                     <p class="text-2xl font-bold text-brand-900">
                         {{ stats.total }}
                     </p>
                 </div>
                 <div class="bg-white border border-brand-100 rounded-lg p-5">
-                    <p class="text-xs text-brand-500 mb-1">Active Orders</p>
+                    <p class="text-xs text-brand-500 mb-1">الطلبات النشطة</p>
                     <p class="text-2xl font-bold text-brand-900">
                         {{ stats.pending }}
                     </p>
@@ -55,7 +63,7 @@ const statusColor = (status) => {
                     :href="route('orders.index')"
                     class="bg-brand-700 text-white rounded-lg p-5 hover:bg-brand-800 transition-colors flex items-center justify-between"
                 >
-                    <span class="text-sm font-medium">My Orders</span>
+                    <span class="text-sm font-medium">طلباتي</span>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="w-4 h-4"
@@ -75,7 +83,7 @@ const statusColor = (status) => {
                     :href="route('profile.edit')"
                     class="bg-white border border-brand-100 text-brand-900 rounded-lg p-5 hover:bg-brand-50/50 transition-colors flex items-center justify-between"
                 >
-                    <span class="text-sm font-medium">My Profile</span>
+                    <span class="text-sm font-medium">ملفي الشخصي</span>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="w-4 h-4"
@@ -101,14 +109,14 @@ const statusColor = (status) => {
                     class="px-6 py-4 border-b border-brand-100 bg-brand-50/40 flex items-center justify-between"
                 >
                     <h2 class="text-sm font-semibold text-brand-900">
-                        Recent Orders
+                        أحدث الطلبات
                     </h2>
                     <Link
                         v-if="recentOrders.length > 0"
                         :href="route('orders.index')"
                         class="text-xs text-brand-700 hover:underline font-medium"
                     >
-                        View All
+                        عرض الكل
                     </Link>
                 </div>
 
@@ -116,12 +124,12 @@ const statusColor = (status) => {
                     v-if="recentOrders.length === 0"
                     class="px-6 py-10 text-center text-brand-500 text-sm"
                 >
-                    You haven't placed any orders yet.
+                    لم تقم بإنشاء أي طلبات بعد.
                     <Link
                         :href="route('home')"
                         class="text-brand-700 hover:underline block mt-2"
                     >
-                        Start Shopping
+                        ابدأ التسوق
                     </Link>
                 </div>
 
@@ -134,13 +142,13 @@ const statusColor = (status) => {
                     >
                         <div>
                             <p class="text-sm font-medium text-brand-900">
-                                Order #{{ order.id }}
+                                الطلب #{{ order.id }}
                             </p>
                             <p class="text-xs text-brand-500 mt-0.5">
                                 {{
                                     new Date(
                                         order.created_at,
-                                    ).toLocaleDateString("en-US", {
+                                    ).toLocaleDateString("ar-EG", {
                                         year: "numeric",
                                         month: "long",
                                         day: "numeric",
@@ -153,7 +161,7 @@ const statusColor = (status) => {
                                 class="px-2.5 py-1 rounded-full text-xs font-medium capitalize"
                                 :class="statusColor(order.status)"
                             >
-                                {{ order.status }}
+                                {{ statusLabel(order.status) }}
                             </span>
                             <span class="text-sm font-semibold text-brand-900"
                                 >{{ order.total_price }} EGP</span

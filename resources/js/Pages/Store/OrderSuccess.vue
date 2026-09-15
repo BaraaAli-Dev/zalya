@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Order Confirmed | Zalya" />
+    <Head title="تم تأكيد الطلب | Zalya" />
 
     <StoreLayout>
         <div class="max-w-2xl mx-auto px-4 md:px-6 py-16 text-center">
@@ -32,17 +32,15 @@ defineProps({
             </div>
 
             <h1 class="text-2xl font-bold text-brand-900 mb-2">
-                Thank you, {{ order.customer_name }}!
+                شكرًا لك، {{ order.customer_name }}!
             </h1>
-            <p class="text-brand-600 mb-8">
-                Your order has been placed successfully.
-            </p>
+            <p class="text-brand-600 mb-8">تم تسجيل طلبك بنجاح.</p>
 
             <div
                 class="bg-white border border-brand-100 rounded-lg p-6 text-left"
             >
                 <h2 class="text-sm font-semibold text-brand-900 mb-4">
-                    Order Details
+                    تفاصيل الطلب
                 </h2>
 
                 <div
@@ -55,7 +53,7 @@ defineProps({
                             {{ item.product.product_name }}
                         </p>
                         <p class="text-xs text-brand-600">
-                            Qty: {{ item.quantity }}
+                            الكمية: {{ item.quantity }}
                         </p>
                     </div>
                     <p class="text-sm font-medium text-brand-700">
@@ -66,8 +64,8 @@ defineProps({
                 <div
                     class="flex items-center justify-between pt-4 font-semibold text-brand-900"
                 >
-                    <span>Total</span>
-                    <span>{{ order.total_price }} EGP</span>
+                    <span>الإجمالي</span>
+                    <span>{{ order.total_price }} جنيه</span>
                 </div>
             </div>
 
@@ -75,7 +73,7 @@ defineProps({
                 :href="route('home')"
                 class="inline-block mt-8 bg-brand-700 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-brand-800 transition-colors"
             >
-                Continue Shopping
+                متابعة التسوق
             </Link>
         </div>
     </StoreLayout>

@@ -16,24 +16,30 @@ const statusColor = (status) => {
         }[status] ?? "bg-gray-50 text-gray-700"
     );
 };
+
+const statusLabel = (status) =>
+    ({
+        pending: "قيد الانتظار",
+        processing: "قيد التجهيز",
+        delivered: "تم التوصيل",
+        cancelled: "ملغي",
+    })[status] ?? status;
 </script>
 
 <template>
-    <Head title="My Orders | Zalya" />
+    <Head title="طلباتي | Zalya" />
 
     <StoreLayout>
         <div class="max-w-4xl mx-auto px-4 md:px-6 py-10">
-            <h1 class="text-2xl font-bold text-brand-900 mb-8">My Orders</h1>
+            <h1 class="text-2xl font-bold text-brand-900 mb-8">طلباتي</h1>
 
             <div v-if="orders.data.length === 0" class="text-center py-24">
-                <p class="text-brand-600 mb-6">
-                    You haven't placed any orders yet.
-                </p>
+                <p class="text-brand-600 mb-6">لم تقم بإنشاء أي طلبات بعد.</p>
                 <Link
                     :href="route('home')"
                     class="inline-block bg-brand-700 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-brand-800 transition-colors"
                 >
-                    Start Shopping
+                    ابدأ التسوق
                 </Link>
             </div>
 
@@ -46,13 +52,13 @@ const statusColor = (status) => {
                 >
                     <div class="flex items-center justify-between mb-2">
                         <p class="text-sm font-semibold text-brand-900">
-                            Order #{{ order.id }}
+                            الطلب #{{ order.id }}
                         </p>
                         <span
                             class="px-2.5 py-1 rounded-full text-xs font-medium capitalize"
                             :class="statusColor(order.status)"
                         >
-                            {{ order.status }}
+                            {{ statusLabel(order.status) }}
                         </span>
                     </div>
                     <div
@@ -60,7 +66,7 @@ const statusColor = (status) => {
                     >
                         <span>{{
                             new Date(order.created_at).toLocaleDateString(
-                                "en-US",
+                                "ar-EG",
                                 {
                                     year: "numeric",
                                     month: "long",
@@ -69,7 +75,7 @@ const statusColor = (status) => {
                             )
                         }}</span>
                         <span class="font-semibold text-brand-900"
-                            >{{ order.total_price }} EGP</span
+                            >{{ order.total_price }} جنيه</span
                         >
                     </div>
                 </Link>

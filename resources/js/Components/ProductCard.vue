@@ -7,7 +7,9 @@ const props = defineProps({
 });
 
 const genderLabel = (gender) => {
-    return { men: "Men", women: "Women", unisex: "Unisex" }[gender] ?? gender;
+    return (
+        { men: "رجالي", women: "نسائي", unisex: "للجنسين" }[gender] ?? gender
+    );
 };
 
 const totalStock = computed(() => {
@@ -66,7 +68,7 @@ const addToCart = () => {
                     v-else
                     class="w-full h-full flex items-center justify-center text-brand-100 text-xs"
                 >
-                    No Image
+                    لا توجد صورة
                 </div>
             </div>
 
@@ -74,7 +76,7 @@ const addToCart = () => {
                 v-if="totalStock <= 0"
                 class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-medium px-2 py-1 rounded"
             >
-                Out of Stock
+                غير متوفر
             </span>
         </Link>
 
@@ -102,8 +104,8 @@ const addToCart = () => {
                     }}
                 </p>
                 <p class="text-sm font-semibold text-brand-700">
-                    <span v-if="hasMultipleSizes">From </span
-                    >{{ minPrice ?? "—" }} EGP
+                    <span v-if="hasMultipleSizes">ابتداءً من </span
+                    >{{ minPrice ?? "—" }} جنيه
                 </p>
             </div>
 
@@ -118,7 +120,7 @@ const addToCart = () => {
                         : 'bg-brand-50 text-brand-600 cursor-not-allowed'
                 "
             >
-                {{ totalStock > 0 ? "Add to Cart" : "Out of Stock" }}
+                {{ totalStock > 0 ? "أضف إلى السلة" : "غير متوفر" }}
             </button>
 
             <Link
@@ -131,7 +133,7 @@ const addToCart = () => {
                         : 'bg-brand-50 text-brand-600 cursor-not-allowed pointer-events-none'
                 "
             >
-                {{ totalStock > 0 ? "Select Size" : "Out of Stock" }}
+                {{ totalStock > 0 ? "اختر الحجم" : "غير متوفر" }}
             </Link>
         </div>
     </div>

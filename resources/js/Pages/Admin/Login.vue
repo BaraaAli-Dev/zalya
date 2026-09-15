@@ -15,20 +15,20 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Admin Login" />
+    <Head title="دخول الإدارة" />
 
     <div class="min-h-screen flex items-center justify-center bg-brand-50/30">
         <div
             class="w-full max-w-md bg-white p-8 rounded-lg shadow-md border border-brand-100"
         >
             <h1 class="text-2xl font-bold mb-6 text-center text-brand-700">
-                Admin Login
+                دخول الإدارة
             </h1>
 
             <form @submit.prevent="submit">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Email
+                        البريد الإلكتروني
                     </label>
                     <input
                         v-model="form.email"
@@ -47,7 +47,7 @@ const submit = () => {
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Password
+                        كلمة المرور
                     </label>
                     <input
                         v-model="form.password"
@@ -71,7 +71,7 @@ const submit = () => {
                         class="rounded border-gray-300 text-brand-700 focus:ring-brand-700"
                     />
                     <label for="remember" class="mr-2 text-sm text-gray-600">
-                        Remember me
+                        تذكرني
                     </label>
                 </div>
 
@@ -80,7 +80,7 @@ const submit = () => {
                     class="w-full bg-brand-700 text-white py-2.5 rounded-md transition-all duration-200 ease-in-out hover:bg-brand-800 hover:shadow-lg disabled:opacity-50"
                     :disabled="form.processing"
                 >
-                    Login
+                    تسجيل الدخول
                 </button>
             </form>
         </div>

@@ -21,7 +21,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="إنشاء حساب" />
 
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-brand-50/30 px-4 py-10"
@@ -37,7 +37,7 @@ const submit = () => {
 
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="name" value="Name" />
+                    <InputLabel for="name" value="الاسم" />
 
                     <TextInput
                         id="name"
@@ -53,7 +53,7 @@ const submit = () => {
                 </div>
 
                 <div class="mt-4">
-                    <InputLabel for="email" value="Email" />
+                    <InputLabel for="email" value="البريد الإلكتروني" />
 
                     <TextInput
                         id="email"
@@ -68,7 +68,7 @@ const submit = () => {
                 </div>
 
                 <div class="mt-4">
-                    <InputLabel for="password" value="Password" />
+                    <InputLabel for="password" value="كلمة المرور" />
 
                     <TextInput
                         id="password"
@@ -85,7 +85,7 @@ const submit = () => {
                 <div class="mt-4">
                     <InputLabel
                         for="password_confirmation"
-                        value="Confirm Password"
+                        value="تأكيد كلمة المرور"
                     />
 
                     <TextInput
@@ -109,14 +109,14 @@ const submit = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Register
+                        إنشاء حساب
                     </PrimaryButton>
                 </div>
             </form>
 
             <div class="mt-6 flex items-center gap-3">
                 <div class="flex-1 h-px bg-brand-100"></div>
-                <span class="text-xs text-brand-500">OR</span>
+                <span class="text-xs text-brand-500">أو</span>
                 <div class="flex-1 h-px bg-brand-100"></div>
             </div>
 
@@ -142,16 +142,16 @@ const submit = () => {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                 </svg>
-                Continue with Google
+                المتابعة باستخدام Google
             </a>
 
             <p class="mt-6 text-center text-sm text-brand-600">
-                Already have an account?
+                لديك حساب بالفعل؟
                 <Link
                     :href="route('login')"
                     class="text-brand-700 font-medium hover:underline"
                 >
-                    Log in
+                    تسجيل الدخول
                 </Link>
             </p>
         </div>

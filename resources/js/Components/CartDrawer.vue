@@ -64,7 +64,7 @@ const removeItem = (productId) => {
                     class="flex items-center justify-between px-5 py-4 border-b border-brand-100"
                 >
                     <h2 class="text-base font-semibold text-brand-900">
-                        Shopping Cart
+                        سلة التسوق
                     </h2>
                     <button
                         @click="close"
@@ -92,14 +92,12 @@ const removeItem = (productId) => {
                     v-if="Object.keys(page.props.cart).length === 0"
                     class="flex-1 flex flex-col items-center justify-center px-6 text-center"
                 >
-                    <p class="text-brand-600 text-sm mb-4">
-                        Your cart is empty.
-                    </p>
+                    <p class="text-brand-600 text-sm mb-4">السلة فارغة.</p>
                     <button
                         @click="close"
                         class="text-sm font-medium text-brand-700 hover:text-brand-900"
                     >
-                        Continue Shopping
+                        متابعة التسوق
                     </button>
                 </div>
                 <!-- Error Message -->
@@ -130,7 +128,7 @@ const removeItem = (productId) => {
                                 v-else
                                 class="w-full h-full flex items-center justify-center text-brand-100 text-[9px]"
                             >
-                                No Image
+                                لا توجد صورة
                             </div>
                         </div>
 
@@ -203,7 +201,7 @@ const removeItem = (productId) => {
                                     {{
                                         (item.price * item.quantity).toFixed(2)
                                     }}
-                                    EGP
+                                    جنيه
                                 </p>
                             </div>
                         </div>
@@ -217,17 +215,17 @@ const removeItem = (productId) => {
                 >
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-brand-900"
-                            >Subtotal</span
+                            >الإجمالي الفرعي</span
                         >
                         <span class="text-sm font-semibold text-brand-900"
-                            >{{ page.props.cartTotal.toFixed(2) }} EGP</span
+                            >{{ page.props.cartTotal.toFixed(2) }} جنيه</span
                         >
                     </div>
                     <Link
                         :href="route('checkout.show')"
                         class="block text-center bg-brand-700 text-white py-3 rounded-md text-sm font-medium hover:bg-brand-800 transition-colors"
                     >
-                        Proceed to Checkout
+                        إتمام الطلب
                     </Link>
                 </div>
             </div>

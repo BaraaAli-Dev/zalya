@@ -20,34 +20,42 @@ const statusColor = (status) => {
         }[status] ?? "bg-gray-50 text-gray-700"
     );
 };
+
+const statusLabel = (status) =>
+    ({
+        pending: "قيد الانتظار",
+        processing: "قيد التجهيز",
+        delivered: "تم التوصيل",
+        cancelled: "ملغي",
+    })[status] ?? status;
 </script>
 
 <template>
     <div>
-        <h1 class="text-2xl font-bold text-brand-900 mb-8">Dashboard</h1>
+        <h1 class="text-2xl font-bold text-brand-900 mb-8">لوحة التحكم</h1>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Total Products</p>
+                <p class="text-xs text-brand-500 mb-1">إجمالي المنتجات</p>
                 <p class="text-2xl font-bold text-brand-900">
                     {{ stats.total_products }}
                 </p>
             </div>
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Categories</p>
+                <p class="text-xs text-brand-500 mb-1">التصنيفات</p>
                 <p class="text-2xl font-bold text-brand-900">
                     {{ stats.total_categories }}
                 </p>
             </div>
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Total Orders</p>
+                <p class="text-xs text-brand-500 mb-1">إجمالي الطلبات</p>
                 <p class="text-2xl font-bold text-brand-900">
                     {{ stats.total_orders }}
                 </p>
             </div>
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Pending Orders</p>
+                <p class="text-xs text-brand-500 mb-1">الطلبات المعلقة</p>
                 <p class="text-2xl font-bold text-yellow-600">
                     {{ stats.pending_orders }}
                 </p>
@@ -57,19 +65,21 @@ const statusColor = (status) => {
         <!-- Revenue + Stock Alerts -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div class="bg-brand-900 text-white rounded-lg p-5 md:col-span-1">
-                <p class="text-xs text-brand-100 mb-1">Total Revenue (Paid)</p>
+                <p class="text-xs text-brand-100 mb-1">
+                    إجمالي الإيرادات (المدفوعة)
+                </p>
                 <p class="text-3xl font-bold">
-                    {{ Number(stats.total_revenue).toFixed(2) }} EGP
+                    {{ Number(stats.total_revenue).toFixed(2) }} جنيه
                 </p>
             </div>
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Low Stock (≤ 5)</p>
+                <p class="text-xs text-brand-500 mb-1">مخزون منخفض (≤ 5)</p>
                 <p class="text-2xl font-bold text-orange-500">
                     {{ stats.low_stock_count }}
                 </p>
             </div>
             <div class="bg-white border border-brand-100 rounded-lg p-5">
-                <p class="text-xs text-brand-500 mb-1">Out of Stock</p>
+                <p class="text-xs text-brand-500 mb-1">نفد المخزون</p>
                 <p class="text-2xl font-bold text-red-600">
                     {{ stats.out_of_stock_count }}
                 </p>
@@ -85,13 +95,13 @@ const statusColor = (status) => {
                     class="px-5 py-4 border-b border-brand-100 bg-brand-50/40 flex items-center justify-between"
                 >
                     <h2 class="text-sm font-semibold text-brand-900">
-                        Recent Orders
+                        أحدث الطلبات
                     </h2>
                     <Link
                         :href="route('admin.orders.index')"
                         class="text-xs text-brand-700 hover:underline font-medium"
                     >
-                        View All
+                        عرض الكل
                     </Link>
                 </div>
 
@@ -99,7 +109,7 @@ const statusColor = (status) => {
                     v-if="recentOrders.length === 0"
                     class="px-5 py-8 text-center text-sm text-brand-400"
                 >
-                    No orders yet.
+                    لا توجد طلبات بعد.
                 </div>
 
                 <div v-else class="divide-y divide-brand-50">
@@ -117,7 +127,7 @@ const statusColor = (status) => {
                                 {{
                                     new Date(
                                         order.created_at,
-                                    ).toLocaleDateString("en-US")
+                                    ).toLocaleDateString("ar-EG")
                                 }}
                             </p>
                         </div>
@@ -126,10 +136,10 @@ const statusColor = (status) => {
                                 class="px-2 py-1 rounded-full text-[11px] font-medium capitalize"
                                 :class="statusColor(order.status)"
                             >
-                                {{ order.status }}
+                                {{ statusLabel(order.status) }}
                             </span>
                             <span class="text-sm font-semibold text-brand-900"
-                                >{{ order.total_price }} EGP</span
+                                >{{ order.total_price }} جنيه</span
                             >
                         </div>
                     </Link>
@@ -144,7 +154,7 @@ const statusColor = (status) => {
                     class="px-5 py-4 border-b border-brand-100 bg-brand-50/40 flex items-center justify-between"
                 >
                     <h2 class="text-sm font-semibold text-brand-900">
-                        Low Stock Alerts
+                        تنبيهات المخزون المنخفض
                     </h2>
                     <Link
                         :href="route('admin.products.index')"
@@ -158,7 +168,7 @@ const statusColor = (status) => {
                     v-if="lowStockVariants.length === 0"
                     class="px-5 py-8 text-center text-sm text-brand-400"
                 >
-                    All products are well stocked. 🎉
+                    جميع المنتجات متوفرة بمخزون جيد. 🎉
                 </div>
 
                 <div v-else class="divide-y divide-brand-50">

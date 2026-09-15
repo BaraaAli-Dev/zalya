@@ -32,7 +32,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
+    <Head title="إعادة تعيين كلمة المرور" />
 
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-brand-50/30 px-4"
@@ -48,7 +48,7 @@ const submit = () => {
 
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="email" value="Email" />
+                    <InputLabel for="email" value="البريد الإلكتروني" />
 
                     <TextInput
                         id="email"
@@ -64,7 +64,7 @@ const submit = () => {
                 </div>
 
                 <div class="mt-4">
-                    <InputLabel for="password" value="New Password" />
+                    <InputLabel for="password" value="كلمة المرور الجديدة" />
 
                     <TextInput
                         id="password"
@@ -81,7 +81,7 @@ const submit = () => {
                 <div class="mt-4">
                     <InputLabel
                         for="password_confirmation"
-                        value="Confirm New Password"
+                        value="تأكيد كلمة المرور الجديدة"
                     />
 
                     <TextInput
@@ -105,7 +105,7 @@ const submit = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Reset Password
+                        إعادة تعيين كلمة المرور
                     </PrimaryButton>
                 </div>
             </form>

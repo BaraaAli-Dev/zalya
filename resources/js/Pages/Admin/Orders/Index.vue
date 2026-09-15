@@ -19,10 +19,18 @@ const statusColor = (status) => {
     );
 };
 
+const statusLabel = (status) =>
+    ({
+        pending: "قيد الانتظار",
+        processing: "قيد التجهيز",
+        delivered: "تم التوصيل",
+        cancelled: "ملغي",
+    })[status] ?? status;
+
 const deleteOrder = (order) => {
     if (
         confirm(
-            `Are you sure you want to delete Order #${order.id}? This action cannot be undone.`,
+            `هل أنت متأكد من حذف الطلب #${order.id}؟ لا يمكن التراجع عن هذا الإجراء.`,
         )
     ) {
         router.delete(route("admin.orders.destroy", order.id));
@@ -32,7 +40,7 @@ const deleteOrder = (order) => {
 
 <template>
     <div>
-        <h1 class="text-2xl font-bold text-brand-900 mb-6">Orders</h1>
+        <h1 class="text-2xl font-bold text-brand-900 mb-6">الطلبات</h1>
 
         <div
             class="bg-white rounded-lg border border-brand-100 overflow-hidden"
@@ -42,16 +50,22 @@ const deleteOrder = (order) => {
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">#</th>
                         <th class="text-left px-4 py-3 font-semibold">
-                            Customer
+                            العميل
                         </th>
-                        <th class="text-left px-4 py-3 font-semibold">Email</th>
-                        <th class="text-left px-4 py-3 font-semibold">Total</th>
                         <th class="text-left px-4 py-3 font-semibold">
-                            Status
+                            البريد الإلكتروني
                         </th>
-                        <th class="text-left px-4 py-3 font-semibold">Date</th>
                         <th class="text-left px-4 py-3 font-semibold">
-                            Actions
+                            الإجمالي
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            الحالة
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            التاريخ
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            الإجراءات
                         </th>
                     </tr>
                 </thead>
@@ -71,20 +85,20 @@ const deleteOrder = (order) => {
                             {{ order.customer_email }}
                         </td>
                         <td class="px-4 py-3 text-brand-600">
-                            {{ order.total_price }} EGP
+                            {{ order.total_price }} جنيه
                         </td>
                         <td class="px-4 py-3">
                             <span
                                 class="px-2 py-1 rounded-full text-xs font-medium capitalize"
                                 :class="statusColor(order.status)"
                             >
-                                {{ order.status }}
+                                {{ statusLabel(order.status) }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-brand-600 text-xs">
                             {{
                                 new Date(order.created_at).toLocaleDateString(
-                                    "en-US",
+                                    "ar-EG",
                                 )
                             }}
                         </td>
@@ -94,13 +108,13 @@ const deleteOrder = (order) => {
                                     :href="route('admin.orders.show', order.id)"
                                     class="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
                                 >
-                                    View
+                                    عرض
                                 </Link>
                                 <button
                                     @click="deleteOrder(order)"
                                     class="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
                                 >
-                                    Delete
+                                    حذف
                                 </button>
                             </div>
                         </td>
@@ -111,7 +125,7 @@ const deleteOrder = (order) => {
                             colspan="7"
                             class="px-4 py-10 text-center text-brand-400"
                         >
-                            No orders yet.
+                            لا توجد طلبات بعد.
                         </td>
                     </tr>
                 </tbody>

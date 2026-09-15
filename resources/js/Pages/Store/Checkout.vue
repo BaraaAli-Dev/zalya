@@ -27,11 +27,11 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Checkout | Zalya" />
+    <Head title="إتمام الطلب | Zalya" />
 
     <StoreLayout>
         <div class="max-w-5xl mx-auto px-4 md:px-6 py-10">
-            <h1 class="text-2xl font-bold text-brand-900 mb-8">Checkout</h1>
+            <h1 class="text-2xl font-bold text-brand-900 mb-8">إتمام الطلب</h1>
             <div
                 v-if="$page.props.errors?.cart"
                 class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm"
@@ -46,13 +46,13 @@ const submit = () => {
                         class="bg-white border border-brand-100 rounded-lg p-6"
                     >
                         <h2 class="text-sm font-semibold text-brand-900 mb-4">
-                            Contact Information
+                            بيانات التواصل
                         </h2>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >Full Name</label
+                                    >الاسم بالكامل</label
                                 >
                                 <input
                                     v-model="form.customer_name"
@@ -69,7 +69,7 @@ const submit = () => {
 
                             <div>
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >Email</label
+                                    >البريد الإلكتروني</label
                                 >
                                 <input
                                     v-model="form.customer_email"
@@ -86,7 +86,7 @@ const submit = () => {
 
                             <div class="sm:col-span-2">
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >Phone</label
+                                    >رقم الهاتف</label
                                 >
                                 <input
                                     v-model="form.customer_phone"
@@ -107,13 +107,13 @@ const submit = () => {
                         class="bg-white border border-brand-100 rounded-lg p-6"
                     >
                         <h2 class="text-sm font-semibold text-brand-900 mb-4">
-                            Shipping Address
+                            عنوان الشحن
                         </h2>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="sm:col-span-2">
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >Street Address</label
+                                    >عنوان الشارع</label
                                 >
                                 <input
                                     v-model="form.shipping_street"
@@ -130,7 +130,7 @@ const submit = () => {
 
                             <div>
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >City</label
+                                    >المدينة</label
                                 >
                                 <input
                                     v-model="form.shipping_city"
@@ -147,7 +147,7 @@ const submit = () => {
 
                             <div>
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >State / Governorate</label
+                                    >المحافظة</label
                                 >
                                 <input
                                     v-model="form.shipping_state"
@@ -158,7 +158,7 @@ const submit = () => {
 
                             <div class="sm:col-span-2">
                                 <label class="block text-xs text-brand-700 mb-1"
-                                    >Country</label
+                                    >الدولة</label
                                 >
                                 <input
                                     v-model="form.shipping_country"
@@ -179,7 +179,7 @@ const submit = () => {
                         class="bg-white border border-brand-100 rounded-lg p-6"
                     >
                         <h2 class="text-sm font-semibold text-brand-900 mb-4">
-                            Payment Method
+                            طريقة الدفع
                         </h2>
 
                         <div class="space-y-3">
@@ -196,10 +196,10 @@ const submit = () => {
                                     <p
                                         class="text-sm font-medium text-brand-900"
                                     >
-                                        Cash on Delivery
+                                        الدفع عند الاستلام
                                     </p>
                                     <p class="text-xs text-brand-500">
-                                        Pay when your order arrives.
+                                        ادفع عند وصول طلبك.
                                     </p>
                                 </div>
                             </label>
@@ -217,11 +217,11 @@ const submit = () => {
                                     <p
                                         class="text-sm font-medium text-brand-900"
                                     >
-                                        Bank Transfer
+                                        تحويل بنكي
                                     </p>
                                     <p class="text-xs text-brand-500">
-                                        Transfer to our bank account and send
-                                        payment proof.
+                                        حوّل إلى حسابنا البنكي وأرسل إثبات
+                                        الدفع.
                                     </p>
                                 </div>
                             </label>
@@ -239,10 +239,10 @@ const submit = () => {
                                     <p
                                         class="text-sm font-medium text-brand-900"
                                     >
-                                        Stripe Card Payment
+                                        الدفع بالبطاقة عبر Stripe
                                     </p>
                                     <p class="text-xs text-brand-500">
-                                        Pay securely with your card.
+                                        ادفع بأمان باستخدام بطاقتك.
                                     </p>
                                 </div>
                             </label>
@@ -261,7 +261,7 @@ const submit = () => {
                         :disabled="form.processing"
                         class="w-full bg-brand-700 text-white py-3 rounded-md text-sm font-medium hover:bg-brand-800 transition-colors disabled:opacity-50"
                     >
-                        Place Order
+                        تأكيد الطلب
                     </button>
                 </form>
 
@@ -271,7 +271,7 @@ const submit = () => {
                         class="bg-brand-50/40 border border-brand-100 rounded-lg p-6 md:sticky md:top-24"
                     >
                         <h2 class="text-sm font-semibold text-brand-900 mb-4">
-                            Order Summary
+                            ملخص الطلب
                         </h2>
 
                         <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
@@ -296,7 +296,7 @@ const submit = () => {
                                         {{ item.product_name }}
                                     </p>
                                     <p class="text-xs text-brand-600">
-                                        Qty: {{ item.quantity }}
+                                        الكمية: {{ item.quantity }}
                                     </p>
                                 </div>
                                 <p
@@ -305,7 +305,7 @@ const submit = () => {
                                     {{
                                         (item.price * item.quantity).toFixed(2)
                                     }}
-                                    EGP
+                                    جنيه
                                 </p>
                             </div>
                         </div>
@@ -313,17 +313,17 @@ const submit = () => {
                         <div
                             class="border-t border-brand-100 pt-4 flex items-center justify-between font-semibold text-brand-900"
                         >
-                            <span>Total</span>
-                            <span>{{ total.toFixed(2) }} EGP</span>
+                            <span>الإجمالي</span>
+                            <span>{{ total.toFixed(2) }} جنيه</span>
                         </div>
 
                         <p class="text-xs text-brand-500 mt-3">
-                            Payment:
+                            الدفع:
                             {{
                                 form.payment_method === "cash_on_delivery"
-                                    ? "Cash on Delivery"
+                                    ? "الدفع عند الاستلام"
                                     : form.payment_method === "bank_transfer"
-                                      ? "Bank Transfer"
+                                      ? "تحويل بنكي"
                                       : "Stripe"
                             }}
                         </p>

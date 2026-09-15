@@ -19,6 +19,13 @@ const notificationsWrapper = ref(null);
 const notifications = ref(page.props.notifications || []);
 
 const unreadNotificationsCount = ref(page.props.unreadNotificationsCount || 0);
+const locale = ref(page.props.locale || "ar");
+const switchLocale = () => {
+    window.location.href = route(
+        "language.switch",
+        locale.value === "ar" ? "en" : "ar",
+    );
+};
 
 const handleClickOutside = (e) => {
     if (accountWrapper.value && !accountWrapper.value.contains(e.target)) {
@@ -64,6 +71,18 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                 </Link>
 
                 <div class="flex items-center gap-5">
+                    <button
+                        type="button"
+                        @click="switchLocale"
+                        class="text-xs font-semibold text-brand-700 hover:text-brand-900 transition-colors"
+                        :aria-label="
+                            locale === 'ar'
+                                ? 'Switch to English'
+                                : 'التبديل إلى العربية'
+                        "
+                    >
+                        {{ locale === "ar" ? "English" : "العربية" }}
+                    </button>
                     <div class="relative" ref="searchWrapper">
                         <button
                             @click="searchOpen = !searchOpen"
@@ -166,7 +185,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                                 <h3
                                     class="text-sm font-semibold text-brand-900"
                                 >
-                                    Notifications
+                                    الإشعارات
                                 </h3>
                             </div>
 
@@ -205,7 +224,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                                             >
                                                 {{
                                                     notification.data.message ||
-                                                    "New notification"
+                                                    "إشعار جديد"
                                                 }}
                                             </p>
                                             <p
@@ -234,7 +253,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                                 v-else
                                 class="px-4 py-6 text-sm text-brand-500 text-center"
                             >
-                                No notifications yet.
+                                لا توجد إشعارات حاليًا.
                             </div>
                         </div>
                     </div>
@@ -244,14 +263,14 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                         :href="route('admin.dashboard')"
                         class="text-sm font-medium text-brand-700 bg-brand-50 px-3 py-1.5 rounded-md hover:bg-brand-100 transition-colors"
                     >
-                        Admin Dashboard
+                        لوحة الإدارة
                     </Link>
                     <Link
                         v-if="!page.props.auth?.user"
                         :href="route('login')"
                         class="text-sm font-medium text-brand-900 hover:text-brand-700 transition-colors"
                     >
-                        Login
+                        تسجيل الدخول
                     </Link>
 
                     <div v-else class="relative" ref="accountWrapper">
@@ -284,19 +303,19 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                                 :href="route('dashboard')"
                                 class="block px-4 py-2 text-sm text-brand-900 hover:bg-brand-50 transition-colors"
                             >
-                                Dashboard
+                                لوحة الحساب
                             </Link>
                             <Link
                                 :href="route('orders.index')"
                                 class="block px-4 py-2 text-sm text-brand-900 hover:bg-brand-50 transition-colors"
                             >
-                                My Orders
+                                طلباتي
                             </Link>
                             <Link
                                 :href="route('profile.edit')"
                                 class="block px-4 py-2 text-sm text-brand-900 hover:bg-brand-50 transition-colors"
                             >
-                                My Profile
+                                ملفي الشخصي
                             </Link>
                             <Link
                                 :href="route('logout')"
@@ -304,7 +323,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                                 as="button"
                                 class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                             >
-                                Logout
+                                تسجيل الخروج
                             </Link>
                         </div>
                     </div>
@@ -324,8 +343,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
                     class="h-9 w-auto mx-auto mb-4 opacity-90"
                 />
                 <p class="text-brand-100">
-                    © {{ new Date().getFullYear() }} Zalya — Unforgettable
-                    Fragrance
+                    © {{ new Date().getFullYear() }} Zalya — عطر لا يُنسى
                 </p>
             </div>
         </footer>

@@ -16,6 +16,14 @@ const statusColor = (status) => {
         }[status] ?? "bg-gray-50 text-gray-700"
     );
 };
+
+const statusLabel = (status) =>
+    ({
+        pending: "قيد الانتظار",
+        processing: "قيد التجهيز",
+        delivered: "تم التوصيل",
+        cancelled: "ملغي",
+    })[status] ?? status;
 </script>
 
 <template>
@@ -41,7 +49,7 @@ const statusColor = (status) => {
                         d="M15 19l-7-7 7-7"
                     />
                 </svg>
-                Back to My Orders
+                العودة إلى طلباتي
             </Link>
 
             <div class="flex items-center gap-3 mb-8">
@@ -52,7 +60,7 @@ const statusColor = (status) => {
                     class="px-3 py-1 rounded-full text-xs font-medium capitalize"
                     :class="statusColor(order.status)"
                 >
-                    {{ order.status }}
+                    {{ statusLabel(order.status) }}
                 </span>
             </div>
 
@@ -60,7 +68,9 @@ const statusColor = (status) => {
                 class="bg-white border border-brand-100 rounded-lg overflow-hidden mb-6"
             >
                 <div class="px-6 py-4 border-b border-brand-100 bg-brand-50/40">
-                    <h2 class="text-sm font-semibold text-brand-900">Items</h2>
+                    <h2 class="text-sm font-semibold text-brand-900">
+                        المنتجات
+                    </h2>
                 </div>
 
                 <div class="divide-y divide-brand-50">
@@ -82,15 +92,16 @@ const statusColor = (status) => {
                             <p class="text-sm font-medium text-brand-900">
                                 {{
                                     item.product?.product_name ??
-                                    "Product removed"
+                                    "تم حذف المنتج"
                                 }}
                             </p>
                             <p class="text-xs text-brand-500">
-                                Qty: {{ item.quantity }} × {{ item.price }} EGP
+                                الكمية: {{ item.quantity }} ×
+                                {{ item.price }} جنيه
                             </p>
                         </div>
                         <p class="text-sm font-semibold text-brand-700">
-                            {{ (item.price * item.quantity).toFixed(2) }} EGP
+                            {{ (item.price * item.quantity).toFixed(2) }} جنيه
                         </p>
                     </div>
                 </div>
@@ -99,17 +110,17 @@ const statusColor = (status) => {
                     class="px-6 py-4 bg-brand-50/40 border-t border-brand-100 flex items-center justify-between"
                 >
                     <span class="text-sm font-semibold text-brand-900"
-                        >Total</span
+                        >الإجمالي</span
                     >
                     <span class="text-lg font-bold text-brand-700"
-                        >{{ order.total_price }} EGP</span
+                        >{{ order.total_price }} جنيه</span
                     >
                 </div>
             </div>
 
             <div class="bg-white border border-brand-100 rounded-lg p-6">
                 <h2 class="text-sm font-semibold text-brand-900 mb-3">
-                    Shipping Address
+                    عنوان الشحن
                 </h2>
                 <p class="text-sm text-brand-700 leading-relaxed">
                     {{ order.shipping_street }}<br />

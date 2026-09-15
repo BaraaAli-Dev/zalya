@@ -11,7 +11,7 @@ const props = defineProps({
 const deleteProduct = (product) => {
     if (
         confirm(
-            `Are you sure you want to delete "${product.product_name}"? This action cannot be undone.`,
+            `هل أنت متأكد من حذف "${product.product_name}"؟ لا يمكن التراجع عن هذا الإجراء.`,
         )
     ) {
         router.delete(route("admin.products.destroy", product.id));
@@ -19,7 +19,9 @@ const deleteProduct = (product) => {
 };
 
 const genderLabel = (gender) => {
-    return { men: "Men", women: "Women", unisex: "Unisex" }[gender] ?? gender;
+    return (
+        { men: "رجالي", women: "نسائي", unisex: "للجنسين" }[gender] ?? gender
+    );
 };
 
 const priceRange = (variants) => {
@@ -27,7 +29,7 @@ const priceRange = (variants) => {
     const prices = variants.map((v) => Number(v.price));
     const min = Math.min(...prices);
     const max = Math.max(...prices);
-    return min === max ? `${min} EGP` : `${min} - ${max} EGP`;
+    return min === max ? `${min} جنيه` : `${min} - ${max} جنيه`;
 };
 
 const totalStock = (variants) => {
@@ -39,12 +41,12 @@ const totalStock = (variants) => {
 <template>
     <div>
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold text-brand-900">Products</h1>
+            <h1 class="text-2xl font-bold text-brand-900">المنتجات</h1>
             <Link
                 :href="route('admin.products.create')"
                 class="bg-brand-700 hover:bg-brand-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
-                + Add New Product
+                + إضافة منتج جديد
             </Link>
         </div>
 
@@ -55,19 +57,23 @@ const totalStock = (variants) => {
                 <thead class="bg-brand-50 text-brand-900">
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">#</th>
-                        <th class="text-left px-4 py-3 font-semibold">Image</th>
-                        <th class="text-left px-4 py-3 font-semibold">Name</th>
                         <th class="text-left px-4 py-3 font-semibold">
-                            Category
+                            الصورة
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">الاسم</th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            التصنيف
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">النوع</th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            الأحجام
+                        </th>
+                        <th class="text-left px-4 py-3 font-semibold">السعر</th>
+                        <th class="text-left px-4 py-3 font-semibold">
+                            المخزون
                         </th>
                         <th class="text-left px-4 py-3 font-semibold">
-                            Gender
-                        </th>
-                        <th class="text-left px-4 py-3 font-semibold">Sizes</th>
-                        <th class="text-left px-4 py-3 font-semibold">Price</th>
-                        <th class="text-left px-4 py-3 font-semibold">Stock</th>
-                        <th class="text-left px-4 py-3 font-semibold">
-                            Actions
+                            الإجراءات
                         </th>
                     </tr>
                 </thead>
@@ -90,7 +96,7 @@ const totalStock = (variants) => {
                                 v-else
                                 class="w-12 h-12 bg-brand-50 rounded-md flex items-center justify-center text-brand-100 text-xs"
                             >
-                                No Img
+                                لا توجد صورة
                             </div>
                         </td>
                         <td class="px-4 py-3 font-medium text-brand-900">
@@ -118,13 +124,13 @@ const totalStock = (variants) => {
                                 :href="route('admin.products.edit', product.id)"
                                 class="text-brand-700 hover:underline font-medium"
                             >
-                                Edit
+                                تعديل
                             </Link>
                             <button
                                 @click="deleteProduct(product)"
                                 class="text-red-600 hover:underline font-medium"
                             >
-                                Delete
+                                حذف
                             </button>
                         </td>
                     </tr>
@@ -134,7 +140,7 @@ const totalStock = (variants) => {
                             colspan="9"
                             class="px-4 py-10 text-center text-brand-400"
                         >
-                            No products found.
+                            لا توجد منتجات.
                         </td>
                     </tr>
                 </tbody>

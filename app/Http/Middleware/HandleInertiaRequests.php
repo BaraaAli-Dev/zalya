@@ -22,6 +22,7 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+            'locale' => fn() => session('locale', config('app.locale', 'ar')),
             'auth' => [
                 'user' => $request->user(),
                 'admin' => Auth::guard('admin')->user(),

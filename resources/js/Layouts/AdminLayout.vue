@@ -8,14 +8,22 @@ import FlashMessage from "@/Components/FlashMessage.vue";
 const page = usePage();
 const notifications = ref([]);
 const unreadCount = ref(0);
+const locale = ref(usePage().props.locale || "ar");
 const notificationsOpen = ref(false);
 const notificationsWrapper = ref(null);
 
+const switchLocale = () => {
+    window.location.href = route(
+        "language.switch",
+        locale.value === "ar" ? "en" : "ar",
+    );
+};
+
 const links = [
-    { label: "Dashboard", route: "admin.dashboard" },
-    { label: "Categories", route: "admin.categories.index" },
-    { label: "Products", route: "admin.products.index" },
-    { label: "Orders", route: "admin.orders.index" },
+    { label: "لوحة التحكم", route: "admin.dashboard" },
+    { label: "التصنيفات", route: "admin.categories.index" },
+    { label: "المنتجات", route: "admin.products.index" },
+    { label: "الطلبات", route: "admin.orders.index" },
 ];
 
 const isActive = (routeName) => route().current(routeName);
@@ -31,7 +39,7 @@ const fetchNotifications = async () => {
 };
 
 const getNotificationMessage = (notification) => {
-    return notification?.data?.message || "New notification";
+    return notification?.data?.message || "إشعار جديد";
 };
 
 const getNotificationOrderId = (notification) => {
@@ -82,7 +90,7 @@ onUnmounted(() => {
                     alt="Zalya Logo"
                     class="h-10 w-10 inline-block mr-2"
                 />
-                Zalya Dashboard
+                لوحة تحكم Zalya
             </h2>
 
             <nav class="space-y-1 flex-1">
@@ -116,10 +124,22 @@ onUnmounted(() => {
                         alt="Zalya Logo"
                         class="h-10 w-10 inline-block mr-2"
                     />
-                    Hello, {{ page.props.auth.admin?.name ?? "Admin" }}!
+                    مرحبًا، {{ page.props.auth.admin?.name ?? "المسؤول" }}!
                 </h1>
 
                 <div class="flex items-center gap-4">
+                    <button
+                        type="button"
+                        @click="switchLocale"
+                        class="text-xs font-semibold text-brand-700 hover:text-brand-900 transition-colors"
+                        :aria-label="
+                            locale === 'ar'
+                                ? 'Switch to English'
+                                : 'التبديل إلى العربية'
+                        "
+                    >
+                        {{ locale === "ar" ? "English" : "العربية" }}
+                    </button>
                     <div class="relative" ref="notificationsWrapper">
                         <button
                             type="button"
@@ -159,7 +179,7 @@ onUnmounted(() => {
                                 <h3
                                     class="text-sm font-semibold text-brand-900"
                                 >
-                                    Notifications
+                                    الإشعارات
                                 </h3>
                                 <button
                                     v-if="unreadCount > 0"
@@ -167,7 +187,7 @@ onUnmounted(() => {
                                     @click="markAllAsRead"
                                     class="text-xs font-medium text-brand-700 hover:text-brand-900"
                                 >
-                                    Mark all read
+                                    تعليم الكل كمقروء
                                 </button>
                             </div>
 

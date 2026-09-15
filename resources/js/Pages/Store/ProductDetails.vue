@@ -12,7 +12,9 @@ const quantity = ref(1);
 const selectedVariantId = ref(props.product.variants?.[0]?.id ?? null);
 
 const genderLabel = (gender) => {
-    return { men: "Men", women: "Women", unisex: "Unisex" }[gender] ?? gender;
+    return (
+        { men: "رجالي", women: "نسائي", unisex: "للجنسين" }[gender] ?? gender
+    );
 };
 
 const selectedVariant = computed(() => {
@@ -47,7 +49,7 @@ const addToCart = () => {
         <div class="max-w-6xl mx-auto px-4 md:px-6 py-10">
             <div class="text-xs text-brand-600 mb-8">
                 <Link :href="route('home')" class="hover:text-brand-700"
-                    >Home</Link
+                    >الرئيسية</Link
                 >
                 <span class="mx-1">/</span>
                 <span class="text-brand-900">{{ product.product_name }}</span>
@@ -70,7 +72,7 @@ const addToCart = () => {
                                 v-else
                                 class="w-full h-full flex items-center justify-center text-brand-100 text-sm"
                             >
-                                No Image
+                                لا توجد صورة
                             </div>
                         </div>
 
@@ -117,7 +119,7 @@ const addToCart = () => {
 
                     <!-- Size Selector -->
                     <div class="mt-6">
-                        <p class="text-sm text-brand-700 mb-2">Size</p>
+                        <p class="text-sm text-brand-700 mb-2">الحجم</p>
                         <div class="flex flex-wrap gap-2">
                             <button
                                 v-for="variant in product.variants"
@@ -139,7 +141,7 @@ const addToCart = () => {
                     </div>
 
                     <div class="mt-4 flex items-center gap-2 text-sm">
-                        <span class="text-brand-600">Availability:</span>
+                        <span class="text-brand-600">التوفر:</span>
                         <span
                             :class="
                                 selectedVariant?.stock > 0
@@ -150,8 +152,8 @@ const addToCart = () => {
                         >
                             {{
                                 selectedVariant?.stock > 0
-                                    ? `In Stock (${selectedVariant.stock} left)`
-                                    : "Out of Stock"
+                                    ? `متوفر (${selectedVariant.stock} متبقي)`
+                                    : "غير متوفر"
                             }}
                         </span>
                     </div>
@@ -199,8 +201,8 @@ const addToCart = () => {
                         >
                             {{
                                 selectedVariant?.stock > 0
-                                    ? "Add to Cart"
-                                    : "Out of Stock"
+                                    ? "أضف إلى السلة"
+                                    : "غير متوفر"
                             }}
                         </button>
                     </div>

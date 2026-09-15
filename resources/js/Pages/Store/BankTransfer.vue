@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="Bank Transfer | Zalya" />
+    <Head title="التحويل البنكي | Zalya" />
 
     <StoreLayout>
         <div class="max-w-3xl mx-auto px-4 md:px-6 py-16">
@@ -35,11 +35,11 @@ const props = defineProps({
                 </div>
 
                 <h1 class="text-2xl font-bold text-brand-900 text-center mb-3">
-                    Bank Transfer Payment
+                    الدفع بالتحويل البنكي
                 </h1>
                 <p class="text-brand-600 text-center mb-8">
-                    Your order has been created successfully. Please complete
-                    the transfer using the details below.
+                    تم إنشاء طلبك بنجاح. يرجى إتمام التحويل باستخدام البيانات
+                    التالية.
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -47,7 +47,7 @@ const props = defineProps({
                         <p
                             class="text-xs uppercase tracking-wide text-brand-500 mb-2"
                         >
-                            Bank Name
+                            اسم البنك
                         </p>
                         <p class="text-lg font-semibold text-brand-900">CIB</p>
                     </div>
@@ -55,7 +55,7 @@ const props = defineProps({
                         <p
                             class="text-xs uppercase tracking-wide text-brand-500 mb-2"
                         >
-                            Account Name
+                            اسم الحساب
                         </p>
                         <p class="text-lg font-semibold text-brand-900">
                             Zalya Store
@@ -75,10 +75,10 @@ const props = defineProps({
                         <p
                             class="text-xs uppercase tracking-wide text-brand-500 mb-2"
                         >
-                            Amount
+                            المبلغ
                         </p>
                         <p class="text-lg font-semibold text-brand-900">
-                            {{ order.total_price }} EGP
+                            {{ order.total_price }} جنيه
                         </p>
                     </div>
                 </div>
@@ -87,8 +87,8 @@ const props = defineProps({
                     class="rounded-lg border border-amber-200 bg-amber-50 p-4 mb-8"
                 >
                     <p class="text-sm text-amber-800">
-                        Please send the transfer confirmation or payment proof
-                        to our support team before the order is processed.
+                        يرجى إرسال تأكيد التحويل أو إثبات الدفع إلى فريق الدعم
+                        قبل تجهيز الطلب.
                     </p>
                 </div>
 
@@ -97,14 +97,14 @@ const props = defineProps({
                         :href="route('checkout.success', order.id)"
                         class="inline-flex items-center justify-center bg-brand-700 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-brand-800 transition-colors"
                     >
-                        I’ve Sent the Payment
+                        أرسلت الدفع
                     </Link>
 
                     <Link
                         :href="route('home')"
                         class="inline-flex items-center justify-center border border-brand-200 text-brand-700 px-6 py-3 rounded-md text-sm font-medium hover:bg-brand-50 transition-colors"
                     >
-                        Continue Shopping
+                        متابعة التسوق
                     </Link>
                 </div>
             </div>

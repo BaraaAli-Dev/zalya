@@ -82,7 +82,7 @@ const close = () => {
                     v-model="query"
                     type="text"
                     autofocus
-                    placeholder="Search perfumes..."
+                    placeholder="ابحث عن العطور..."
                     class="flex-1 outline-none focus:outline-none focus:ring-0 border-none text-sm text-brand-900 placeholder:text-brand-400"
                 />
                 <button
@@ -112,14 +112,14 @@ const close = () => {
                     v-if="loading"
                     class="py-5 text-center text-xs text-brand-500"
                 >
-                    Searching...
+                    جارٍ البحث...
                 </div>
 
                 <div
                     v-else-if="results.length === 0"
                     class="py-5 text-center text-xs text-brand-500"
                 >
-                    No products found
+                    لم يتم العثور على منتجات
                 </div>
 
                 <button
@@ -155,7 +155,7 @@ const close = () => {
                                   )
                                 : "—"
                         }}
-                        EGP
+                        جنيه
                     </p>
                 </button>
             </div>

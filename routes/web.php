@@ -19,6 +19,14 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Admin\NotificationController;
 
+Route::get('/language/{locale}', function (\Illuminate\Http\Request $request, string $locale) {
+    abort_unless(in_array($locale, ['ar', 'en'], true), 404);
+
+    $request->session()->put('locale', $locale);
+
+    return back();
+})->whereIn('locale', ['ar', 'en'])->name('language.switch');
+
 
 // Public Pages
 Route::get('/', [StorefrontController::class, 'home'])->name('home');

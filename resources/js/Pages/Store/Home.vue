@@ -30,21 +30,20 @@ const clearFilters = () => {
 </script>
 
 <template>
-    <Head title="Zalya | Unforgettable Fragrance" />
+    <Head title="Zalya | عطر لا يُنسى" />
 
     <StoreLayout>
         <!-- Hero Section -->
         <section class="bg-brand-900 text-white">
             <div class="max-w-7xl mx-auto px-6 py-20 text-center">
                 <p class="text-brand-100 tracking-[0.3em] text-xs mb-4">
-                    ZALYA PERFUME
+                    عطور زاليا
                 </p>
                 <h1 class="text-3xl md:text-5xl font-bold mb-5">
-                    Unforgettable Fragrance
+                    عطر لا يُنسى
                 </h1>
                 <p class="text-brand-100 max-w-xl mx-auto">
-                    Discover scents crafted to leave a lasting impression, made
-                    with love, just for you.
+                    اكتشف عطورًا صُممت لتترك أثرًا يدوم، وصُنعت بحب من أجلك.
                 </p>
             </div>
         </section>
@@ -60,14 +59,14 @@ const clearFilters = () => {
                 <!-- Category Dropdown -->
                 <div class="flex items-center gap-2">
                     <label class="text-sm font-medium text-brand-900 shrink-0"
-                        >Category:</label
+                        >التصنيف:</label
                     >
                     <select
                         :value="filters.category || ''"
                         @change="applyFilter('category', $event.target.value)"
                         class="border border-brand-100 rounded-md pl-3 pr-8 py-1.5 text-sm text-brand-900 focus:outline-none focus:ring-2 focus:ring-brand-600 min-w-[180px]"
                     >
-                        <option value="">All Categories</option>
+                        <option value="">كل التصنيفات</option>
                         <option
                             v-for="cat in categories"
                             :key="cat.id"
@@ -91,7 +90,7 @@ const clearFilters = () => {
                                 : 'bg-brand-50 text-brand-900 hover:bg-brand-100'
                         "
                     >
-                        All
+                        الكل
                     </button>
                     <button
                         v-for="g in ['men', 'women', 'unisex']"
@@ -113,7 +112,7 @@ const clearFilters = () => {
                     @click="clearFilters"
                     class="ml-auto text-xs text-red-600 hover:underline shrink-0"
                 >
-                    Clear filters
+                    مسح الفلاتر
                 </button>
             </div>
         </section>
@@ -132,7 +131,7 @@ const clearFilters = () => {
             </div>
 
             <div v-else class="text-center py-24 text-brand-600">
-                No products match your filters.
+                لا توجد منتجات تطابق اختياراتك.
             </div>
 
             <div

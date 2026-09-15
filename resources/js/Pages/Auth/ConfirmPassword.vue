@@ -18,7 +18,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Confirm Password" />
+    <Head title="تأكيد كلمة المرور" />
 
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-brand-50/30 px-4"
@@ -33,13 +33,12 @@ const submit = () => {
             </div>
 
             <p class="mb-4 text-sm text-brand-600">
-                This is a secure area. Please confirm your password before
-                continuing.
+                هذه منطقة آمنة. يرجى تأكيد كلمة المرور قبل المتابعة.
             </p>
 
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="password" value="Password" />
+                    <InputLabel for="password" value="كلمة المرور" />
 
                     <TextInput
                         id="password"
@@ -60,7 +59,7 @@ const submit = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Confirm
+                        تأكيد
                     </PrimaryButton>
                 </div>
             </form>

@@ -23,7 +23,7 @@ export default {
                 },
             },
             fontFamily: {
-                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
+                sans: ["Cairo", ...defaultTheme.fontFamily.sans],
             },
         },
     },

@@ -1,19 +1,19 @@
 <script setup>
-import { ref, markRaw } from 'vue';
+import { ref, markRaw } from "vue";
 
 const props = defineProps({
     existingImages: { type: Array, default: () => [] },
 });
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(["change"]);
 
 const items = ref(
     props.existingImages.map((path, index) => ({
         id: `existing-${index}`,
-        type: 'existing',
+        type: "existing",
         path,
         previewUrl: `/storage/${path}`,
-    }))
+    })),
 );
 
 const fileInput = ref(null);
@@ -23,12 +23,12 @@ const handleFiles = (e) => {
     files.forEach((file) => {
         items.value.push({
             id: `new-${Date.now()}-${Math.random()}`,
-            type: 'new',
+            type: "new",
             file: markRaw(file),
             previewUrl: URL.createObjectURL(file),
         });
     });
-    e.target.value = '';
+    e.target.value = "";
     emitChange();
 };
 
@@ -48,10 +48,14 @@ const makePrimary = (id) => {
 
 const emitChange = () => {
     const order = items.value.map((item) => item.type);
-    const existing_images = items.value.filter((i) => i.type === 'existing').map((i) => i.path);
-    const new_images = items.value.filter((i) => i.type === 'new').map((i) => i.file);
+    const existing_images = items.value
+        .filter((i) => i.type === "existing")
+        .map((i) => i.path);
+    const new_images = items.value
+        .filter((i) => i.type === "new")
+        .map((i) => i.file);
 
-    emit('change', { order, existing_images, new_images });
+    emit("change", { order, existing_images, new_images });
 };
 
 emitChange();
@@ -66,14 +70,17 @@ emitChange();
                 class="relative w-24 h-24 rounded-md overflow-hidden border-2"
                 :class="index === 0 ? 'border-brand-700' : 'border-brand-100'"
             >
-                <img :src="item.previewUrl" class="w-full h-full object-cover" />
+                <img
+                    :src="item.previewUrl"
+                    class="w-full h-full object-cover"
+                />
 
                 <!-- Main Image Indicator -->
                 <span
                     v-if="index === 0"
                     class="absolute bottom-0 inset-x-0 bg-brand-700 text-white text-[10px] text-center py-0.5"
                 >
-                    Main
+                    رئيسية
                 </span>
 
                 <!-- Remove Image -->
@@ -91,7 +98,7 @@ emitChange();
                     type="button"
                     @click="makePrimary(item.id)"
                     class="absolute top-1 left-1 bg-white/90 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-white transition-colors"
-                    title="Set as main image"
+                    title="تعيين كصورة رئيسية"
                 >
                     ★
                 </button>
@@ -107,7 +114,7 @@ emitChange();
             class="w-full border border-brand-100 rounded-md px-3 py-2 text-sm"
         />
         <p class="text-xs text-brand-600 mt-1">
-            You can set one image as the main image by clicking the star icon.
+            يمكنك تعيين صورة رئيسية بالضغط على أيقونة النجمة.
         </p>
     </div>
 </template>

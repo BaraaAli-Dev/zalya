@@ -22,7 +22,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head title="استعادة كلمة المرور" />
 
     <div
         class="min-h-screen flex flex-col items-center justify-center bg-brand-50/30 px-4"
@@ -37,8 +37,8 @@ const submit = () => {
             </div>
 
             <p class="mb-4 text-sm text-brand-600">
-                Forgot your password? No problem. Just enter your email and
-                we'll send you a password reset link.
+                هل نسيت كلمة المرور؟ لا مشكلة. أدخل بريدك الإلكتروني وسنرسل لك
+                رابطًا لإعادة تعيين كلمة المرور.
             </p>
 
             <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
@@ -47,7 +47,7 @@ const submit = () => {
 
             <form @submit.prevent="submit">
                 <div>
-                    <InputLabel for="email" value="Email" />
+                    <InputLabel for="email" value="البريد الإلكتروني" />
 
                     <TextInput
                         id="email"
@@ -67,18 +67,18 @@ const submit = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Email Password Reset Link
+                        إرسال رابط إعادة تعيين كلمة المرور
                     </PrimaryButton>
                 </div>
             </form>
 
             <p class="mt-6 text-center text-sm text-brand-600">
-                Remembered your password?
+                تذكرت كلمة المرور؟
                 <Link
                     :href="route('login')"
                     class="text-brand-700 font-medium hover:underline"
                 >
-                    Log in
+                    تسجيل الدخول
                 </Link>
             </p>
         </div>

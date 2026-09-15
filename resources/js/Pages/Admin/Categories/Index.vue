@@ -7,7 +7,7 @@ const props = defineProps({
 });
 
 const deleteCategory = (category) => {
-    if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
+    if (confirm(`هل أنت متأكد من حذف "${category.name}"؟`)) {
         router.delete(route("admin.categories.destroy", category.id));
     }
 };
@@ -16,28 +16,32 @@ const deleteCategory = (category) => {
 <template>
     <AdminLayout>
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold text-brand-700">Categories</h1>
+            <h1 class="text-2xl font-bold text-brand-700">التصنيفات</h1>
 
             <Link
                 :href="route('admin.categories.create')"
                 class="bg-brand-700 text-white px-4 py-2 rounded-md hover:bg-brand-800 transition-all duration-200"
             >
-                + Add New Category
+                + إضافة تصنيف جديد
             </Link>
         </div>
 
         <!-- Success message -->
 
         <!-- Table -->
-        <div class="bg-white rounded-lg shadow-sm border border-brand-100 overflow-hidden">
+        <div
+            class="bg-white rounded-lg shadow-sm border border-brand-100 overflow-hidden"
+        >
             <table class="w-full text-left">
                 <thead class="bg-brand-50/50 text-brand-900 text-sm">
                     <tr>
                         <th class="px-6 py-3 font-semibold">#</th>
-                        <th class="px-6 py-3 font-semibold">Name</th>
-                        <th class="px-6 py-3 font-semibold">Slug</th>
-                        <th class="px-6 py-3 font-semibold">Created At</th>
-                        <th class="px-6 py-3 font-semibold text-center">Actions</th>
+                        <th class="px-6 py-3 font-semibold">الاسم</th>
+                        <th class="px-6 py-3 font-semibold">المعرّف</th>
+                        <th class="px-6 py-3 font-semibold">تاريخ الإنشاء</th>
+                        <th class="px-6 py-3 font-semibold text-center">
+                            الإجراءات
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-brand-50">
@@ -46,33 +50,51 @@ const deleteCategory = (category) => {
                         :key="category.id"
                         class="hover:bg-brand-50/30 transition-colors duration-150"
                     >
-                        <td class="px-6 py-4 text-gray-500">{{ category.id }}</td>
-                        <td class="px-6 py-4 font-medium text-gray-800">{{ category.name }}</td>
-                        <td class="px-6 py-4 text-gray-500">{{ category.slug }}</td>
+                        <td class="px-6 py-4 text-gray-500">
+                            {{ category.id }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-800">
+                            {{ category.name }}
+                        </td>
+                        <td class="px-6 py-4 text-gray-500">
+                            {{ category.slug }}
+                        </td>
                         <td class="px-6 py-4 text-gray-500 text-sm">
-                            {{ new Date(category.created_at).toLocaleDateString('en-US') }}
+                            {{
+                                new Date(
+                                    category.created_at,
+                                ).toLocaleDateString("en-US")
+                            }}
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-3">
                                 <Link
-                                    :href="route('admin.categories.edit', category.id)"
+                                    :href="
+                                        route(
+                                            'admin.categories.edit',
+                                            category.id,
+                                        )
+                                    "
                                     class="text-brand-700 hover:text-brand-900 text-sm font-medium"
                                 >
-                                    Edit
+                                    تعديل
                                 </Link>
                                 <button
                                     @click="deleteCategory(category)"
                                     class="text-red-600 hover:text-red-800 text-sm font-medium"
                                 >
-                                    Delete
+                                    حذف
                                 </button>
                             </div>
                         </td>
                     </tr>
 
                     <tr v-if="categories.data.length === 0">
-                        <td colspan="5" class="px-6 py-10 text-center text-gray-400">
-                            No categories found
+                        <td
+                            colspan="5"
+                            class="px-6 py-10 text-center text-gray-400"
+                        >
+                            لا توجد تصنيفات
                         </td>
                     </tr>
                 </tbody>
@@ -80,7 +102,10 @@ const deleteCategory = (category) => {
         </div>
 
         <!-- Pagination -->
-        <div class="mt-6 flex justify-center gap-1" v-if="categories.links.length > 3">
+        <div
+            class="mt-6 flex justify-center gap-1"
+            v-if="categories.links.length > 3"
+        >
             <Link
                 v-for="(link, index) in categories.links"
                 :key="index"
