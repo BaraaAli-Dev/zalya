@@ -18,6 +18,7 @@ const form = useForm({
     shipping_city: "",
     shipping_state: "",
     shipping_country: "Egypt",
+    payment_method: "cash_on_delivery",
 });
 
 const submit = () => {
@@ -174,6 +175,87 @@ const submit = () => {
                         </div>
                     </div>
 
+                    <div
+                        class="bg-white border border-brand-100 rounded-lg p-6"
+                    >
+                        <h2 class="text-sm font-semibold text-brand-900 mb-4">
+                            Payment Method
+                        </h2>
+
+                        <div class="space-y-3">
+                            <label
+                                class="flex items-center gap-3 rounded-md border border-brand-100 p-3 cursor-pointer transition-colors hover:border-brand-300"
+                            >
+                                <input
+                                    v-model="form.payment_method"
+                                    type="radio"
+                                    value="cash_on_delivery"
+                                    class="text-brand-700 focus:ring-brand-700"
+                                />
+                                <div>
+                                    <p
+                                        class="text-sm font-medium text-brand-900"
+                                    >
+                                        Cash on Delivery
+                                    </p>
+                                    <p class="text-xs text-brand-500">
+                                        Pay when your order arrives.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label
+                                class="flex items-center gap-3 rounded-md border border-brand-100 p-3 cursor-pointer transition-colors hover:border-brand-300"
+                            >
+                                <input
+                                    v-model="form.payment_method"
+                                    type="radio"
+                                    value="bank_transfer"
+                                    class="text-brand-700 focus:ring-brand-700"
+                                />
+                                <div>
+                                    <p
+                                        class="text-sm font-medium text-brand-900"
+                                    >
+                                        Bank Transfer
+                                    </p>
+                                    <p class="text-xs text-brand-500">
+                                        Transfer to our bank account and send
+                                        payment proof.
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label
+                                class="flex items-center gap-3 rounded-md border border-brand-100 p-3 cursor-pointer transition-colors hover:border-brand-300"
+                            >
+                                <input
+                                    v-model="form.payment_method"
+                                    type="radio"
+                                    value="stripe"
+                                    class="text-brand-700 focus:ring-brand-700"
+                                />
+                                <div>
+                                    <p
+                                        class="text-sm font-medium text-brand-900"
+                                    >
+                                        Stripe Card Payment
+                                    </p>
+                                    <p class="text-xs text-brand-500">
+                                        Pay securely with your card.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <p
+                            v-if="form.errors.payment_method"
+                            class="text-red-600 text-xs mt-2"
+                        >
+                            {{ form.errors.payment_method }}
+                        </p>
+                    </div>
+
                     <button
                         type="submit"
                         :disabled="form.processing"
@@ -236,7 +318,14 @@ const submit = () => {
                         </div>
 
                         <p class="text-xs text-brand-500 mt-3">
-                            Payment: Cash on Delivery
+                            Payment:
+                            {{
+                                form.payment_method === "cash_on_delivery"
+                                    ? "Cash on Delivery"
+                                    : form.payment_method === "bank_transfer"
+                                      ? "Bank Transfer"
+                                      : "Stripe"
+                            }}
                         </p>
                     </div>
                 </div>

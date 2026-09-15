@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Inertia\Inertia;
+use App\Notifications\OrderStatusUpdatedNotification;
 
 class OrderController extends Controller
 {
@@ -34,6 +35,10 @@ class OrderController extends Controller
         ]);
 
         $order->update($validated);
+
+        if ($order->user) {
+            $order->user->notify(new OrderStatusUpdatedNotification($order));
+        }
 
         return back()->with('success', 'Order status updated successfully.');
     }

@@ -33,6 +33,12 @@ class HandleInertiaRequests extends Middleware
             'cart' => $cart,
             'cartCount' => collect($cart)->sum('quantity'),
             'cartTotal' => collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']),
+            'notifications' => fn() => $request->user()
+                ? $request->user()->notifications()->latest()->take(10)->get()
+                : [],
+            'unreadNotificationsCount' => fn() => $request->user()
+                ? $request->user()->unreadNotifications()->count()
+                : 0,
         ];
     }
 }

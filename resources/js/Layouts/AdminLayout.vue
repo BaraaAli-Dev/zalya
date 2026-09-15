@@ -1,22 +1,73 @@
 <script setup>
-import FlashMessage from "@/Components/FlashMessage.vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import axios from "axios";
 import logo from "@/assets/images/logo.png";
+import FlashMessage from "@/Components/FlashMessage.vue";
 
 const page = usePage();
+const notifications = ref([]);
+const unreadCount = ref(0);
+const notificationsOpen = ref(false);
+const notificationsWrapper = ref(null);
 
 const links = [
-    { label: "Home", route: "admin.dashboard" },
-    { label: "Products", route: "admin.products.index" },
+    { label: "Dashboard", route: "admin.dashboard" },
     { label: "Categories", route: "admin.categories.index" },
+    { label: "Products", route: "admin.products.index" },
     { label: "Orders", route: "admin.orders.index" },
-    { label: "View Store", route: "home" },
 ];
 
-const isActive = (routeName) => {
-    return routeName !== "#" && route().current(routeName);
+const isActive = (routeName) => route().current(routeName);
+
+const fetchNotifications = async () => {
+    if (!route().has("admin.notifications.index")) {
+        return;
+    }
+
+    const { data } = await axios.get(route("admin.notifications.index"));
+    notifications.value = data.notifications;
+    unreadCount.value = data.unread_count;
 };
+
+const getNotificationMessage = (notification) => {
+    return notification?.data?.message || "New notification";
+};
+
+const getNotificationOrderId = (notification) => {
+    return notification?.data?.order_id;
+};
+
+const isNotificationUnread = (notification) => !notification.read_at;
+
+const markAsRead = async (id) => {
+    await axios.post(route("admin.notifications.read", id));
+    await fetchNotifications();
+};
+
+const markAllAsRead = async () => {
+    await axios.post(route("admin.notifications.readAll"));
+    await fetchNotifications();
+};
+
+const handleClickOutside = (event) => {
+    if (
+        notificationsWrapper.value &&
+        !notificationsWrapper.value.contains(event.target)
+    ) {
+        notificationsOpen.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener("click", handleClickOutside);
+    fetchNotifications();
+    setInterval(fetchNotifications, 30000);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <template>
@@ -65,10 +116,193 @@ const isActive = (routeName) => {
                         alt="Zalya Logo"
                         class="h-10 w-10 inline-block mr-2"
                     />
-                    Hello, {{ page.props.auth.user.name }}!
+                    Hello, {{ page.props.auth.admin?.name ?? "Admin" }}!
                 </h1>
 
                 <div class="flex items-center gap-4">
+                    <div class="relative" ref="notificationsWrapper">
+                        <button
+                            type="button"
+                            @click.stop="notificationsOpen = !notificationsOpen"
+                            class="relative inline-flex items-center justify-center rounded-full p-2 text-brand-700 hover:bg-brand-50 transition-colors"
+                            aria-label="Toggle notifications"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
+                                />
+                            </svg>
+                            <span
+                                v-if="unreadCount > 0"
+                                class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 min-w-4 px-1 flex items-center justify-center"
+                            >
+                                {{ unreadCount > 9 ? "9+" : unreadCount }}
+                            </span>
+                        </button>
+
+                        <div
+                            v-show="notificationsOpen"
+                            class="absolute right-0 mt-2 w-80 bg-white border border-brand-100 rounded-xl shadow-xl z-50 overflow-hidden"
+                        >
+                            <div
+                                class="flex items-center justify-between px-4 py-3 border-b border-brand-100"
+                            >
+                                <h3
+                                    class="text-sm font-semibold text-brand-900"
+                                >
+                                    Notifications
+                                </h3>
+                                <button
+                                    v-if="unreadCount > 0"
+                                    type="button"
+                                    @click="markAllAsRead"
+                                    class="text-xs font-medium text-brand-700 hover:text-brand-900"
+                                >
+                                    Mark all read
+                                </button>
+                            </div>
+
+                            <div
+                                v-if="notifications.length"
+                                class="max-h-80 overflow-y-auto"
+                            >
+                                <div
+                                    v-for="notification in notifications"
+                                    :key="notification.id"
+                                    class="border-b border-brand-50 last:border-0"
+                                >
+                                    <Link
+                                        v-if="
+                                            getNotificationOrderId(notification)
+                                        "
+                                        :href="
+                                            route(
+                                                'admin.orders.show',
+                                                getNotificationOrderId(
+                                                    notification,
+                                                ),
+                                            )
+                                        "
+                                        :class="[
+                                            isNotificationUnread(notification)
+                                                ? 'bg-brand-50 border-l-4 border-brand-700'
+                                                : 'bg-white opacity-80 border-l-4 border-transparent',
+                                            'block px-4 py-3 transition-colors hover:bg-brand-50',
+                                        ]"
+                                        @click="markAsRead(notification.id)"
+                                    >
+                                        <div
+                                            class="flex items-start justify-between gap-3"
+                                        >
+                                            <div>
+                                                <p
+                                                    :class="[
+                                                        isNotificationUnread(
+                                                            notification,
+                                                        )
+                                                            ? 'text-brand-900 font-semibold'
+                                                            : 'text-brand-600',
+                                                        'text-sm',
+                                                    ]"
+                                                >
+                                                    {{
+                                                        getNotificationMessage(
+                                                            notification,
+                                                        )
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="mt-1 text-[11px] text-brand-500"
+                                                >
+                                                    {{
+                                                        new Date(
+                                                            notification.created_at,
+                                                        ).toLocaleString()
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <span
+                                                v-if="
+                                                    isNotificationUnread(
+                                                        notification,
+                                                    )
+                                                "
+                                                class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-700 flex-shrink-0"
+                                            ></span>
+                                        </div>
+                                    </Link>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        @click="markAsRead(notification.id)"
+                                        :class="[
+                                            isNotificationUnread(notification)
+                                                ? 'bg-brand-50 border-l-4 border-brand-700'
+                                                : 'bg-white opacity-80 border-l-4 border-transparent',
+                                            'block w-full text-left px-4 py-3 transition-colors hover:bg-brand-50',
+                                        ]"
+                                    >
+                                        <div
+                                            class="flex items-start justify-between gap-3"
+                                        >
+                                            <div>
+                                                <p
+                                                    :class="[
+                                                        isNotificationUnread(
+                                                            notification,
+                                                        )
+                                                            ? 'text-brand-900 font-semibold'
+                                                            : 'text-brand-600',
+                                                        'text-sm',
+                                                    ]"
+                                                >
+                                                    {{
+                                                        getNotificationMessage(
+                                                            notification,
+                                                        )
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="mt-1 text-[11px] text-brand-500"
+                                                >
+                                                    {{
+                                                        new Date(
+                                                            notification.created_at,
+                                                        ).toLocaleString()
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <span
+                                                v-if="
+                                                    isNotificationUnread(
+                                                        notification,
+                                                    )
+                                                "
+                                                class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-700 flex-shrink-0"
+                                            ></span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                v-else
+                                class="px-4 py-6 text-sm text-brand-500 text-center"
+                            >
+                                No notifications yet.
+                            </div>
+                        </div>
+                    </div>
+
                     <a
                         :href="route('home')"
                         class="text-sm font-medium text-brand-700 bg-brand-50 px-3 py-1.5 rounded-md hover:bg-brand-100 transition-colors flex items-center gap-1.5"

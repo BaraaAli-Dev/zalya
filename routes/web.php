@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Admin\NotificationController;
 
 
 // Public Pages
@@ -26,23 +28,31 @@ Route::delete('/cart/{variantId}', [CartController::class, 'remove'])->name('car
 Route::get('/products/{product:slug}', [ProductDetailController::class, 'show'])->name('products.show');
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::post('/stripe/webhook', [CheckoutController::class, 'stripeWebhook'])->name('stripe.webhook');
+Route::get('/checkout/bank-transfer/{order}', [CheckoutController::class, 'bankTransfer'])->name('checkout.bankTransfer');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
+
     // Orders
     Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/my-orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Customer Notifications
+    Route::post('/notifications/{id}/read', function (\Illuminate\Http\Request $request, $id) {
+        $request->user()->notifications()->findOrFail($id)->markAsRead();
+        return back();
+    })->name('notifications.read');
 });
 
 require __DIR__ . '/auth.php';
@@ -60,16 +70,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/products', function () {
-            return Inertia::render('Admin/Products');
-        })->name('products');
-
         Route::resource('categories', CategoryController::class);
 
         Route::resource('products', ProductController::class);
 
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
         Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+        // Admin Notifications
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
     });

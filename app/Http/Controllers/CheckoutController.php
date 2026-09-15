@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
+use App\Services\StripePaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
-use App\Mail\OrderConfirmationMail;
 use Inertia\Inertia;
 
 class CheckoutController extends Controller
 {
+    public function __construct(protected StripePaymentService $stripePaymentService) {}
+
     public function show()
     {
         $cart = Session::get('cart', []);
@@ -47,11 +52,18 @@ class CheckoutController extends Controller
             'shipping_city' => 'required|string|max:255',
             'shipping_state' => 'nullable|string|max:255',
             'shipping_country' => 'required|string|max:255',
+            'payment_method' => 'required|in:cash_on_delivery,bank_transfer,stripe',
         ]);
+
+        if ($validated['payment_method'] === 'stripe' && ! $this->stripePaymentService->isConfigured()) {
+            return back()->withErrors([
+                'payment_method' => 'Stripe is not configured. Add STRIPE_SECRET to your .env file first.',
+            ]);
+        }
 
         try {
             $order = DB::transaction(function () use ($validated, $cart) {
-                // 1) قفل كل الـ Variants المطلوبة والتأكد من توفر الكمية أول حاجة
+                // 1) Check if all items are still available in stock
                 $variantIds = collect($cart)->pluck('variant_id');
                 $variants = ProductVariant::whereIn('id', $variantIds)
                     ->lockForUpdate()
@@ -66,7 +78,7 @@ class CheckoutController extends Controller
                     }
                 }
 
-                // 2) لو كل حاجة متاحة، دلوقتي بس ننقص الـ Stock فعلياً
+
                 $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
 
                 $order = Order::create([
@@ -74,7 +86,7 @@ class CheckoutController extends Controller
                     'user_id' => Auth::id(),
                     'total_price' => $total,
                     'status' => 'pending',
-                    'payment_method' => 'cash_on_delivery',
+                    'payment_method' => $validated['payment_method'],
                     'payment_status' => 'unpaid',
                 ]);
 
@@ -100,9 +112,40 @@ class CheckoutController extends Controller
 
         Session::forget('cart');
 
+        // Notify admins about the new order
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewOrderNotification($order));
+        }
+
         Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));
 
+        if ($order->payment_method === 'stripe') {
+            $checkoutSession = $this->stripePaymentService->createCheckoutSession($order);
+
+            if ($checkoutSession && isset($checkoutSession->url)) {
+                return redirect()->away($checkoutSession->url);
+            }
+
+            return back()->withErrors([
+                'payment_method' => 'Stripe could not create a checkout session. Please try again.',
+            ]);
+        }
+
+        if ($order->payment_method === 'bank_transfer') {
+            return redirect()->route('checkout.bankTransfer', $order->id);
+        }
+
         return redirect()->route('checkout.success', $order->id);
+    }
+
+    public function bankTransfer(Order $order)
+    {
+        $order->load('items.product');
+
+        return Inertia::render('Store/BankTransfer', [
+            'order' => $order,
+        ]);
     }
 
     public function success(Order $order)
@@ -112,5 +155,21 @@ class CheckoutController extends Controller
         return Inertia::render('Store/OrderSuccess', [
             'order' => $order,
         ]);
+    }
+
+    public function stripeWebhook(Request $request)
+    {
+        try {
+            $this->stripePaymentService->handleWebhook(
+                $request->getContent(),
+                $request->header('Stripe-Signature'),
+            );
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Invalid Stripe webhook.'], 400);
+        }
+
+        return response()->json(['received' => true]);
     }
 }
