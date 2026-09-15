@@ -43,9 +43,9 @@ const deleteOrder = (order) => {
         <h1 class="text-2xl font-bold text-brand-900 mb-6">الطلبات</h1>
 
         <div
-            class="bg-white rounded-lg border border-brand-100 overflow-hidden"
+            class="overflow-x-auto rounded-lg border border-brand-100 bg-white"
         >
-            <table class="w-full text-sm">
+            <table class="w-full min-w-[760px] text-sm">
                 <thead class="bg-brand-50 text-brand-900">
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">#</th>

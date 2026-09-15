@@ -51,9 +51,9 @@ const totalStock = (variants) => {
         </div>
 
         <div
-            class="bg-white rounded-lg border border-brand-100 overflow-hidden"
+            class="overflow-x-auto rounded-lg border border-brand-100 bg-white"
         >
-            <table class="w-full text-sm">
+            <table class="w-full min-w-[900px] text-sm">
                 <thead class="bg-brand-50 text-brand-900">
                     <tr>
                         <th class="text-left px-4 py-3 font-semibold">#</th>

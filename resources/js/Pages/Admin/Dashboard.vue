@@ -35,7 +35,9 @@ const statusLabel = (status) =>
         <h1 class="text-2xl font-bold text-brand-900 mb-8">لوحة التحكم</h1>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div
+            class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 sm:gap-4"
+        >
             <div class="bg-white border border-brand-100 rounded-lg p-5">
                 <p class="text-xs text-brand-500 mb-1">إجمالي المنتجات</p>
                 <p class="text-2xl font-bold text-brand-900">
@@ -117,7 +119,7 @@ const statusLabel = (status) =>
                         v-for="order in recentOrders"
                         :key="order.id"
                         :href="route('admin.orders.show', order.id)"
-                        class="flex items-center justify-between px-5 py-3 hover:bg-brand-50/30 transition-colors"
+                        class="flex flex-col items-start gap-2 px-5 py-3 transition-colors hover:bg-brand-50/30 sm:flex-row sm:items-center sm:justify-between"
                     >
                         <div>
                             <p class="text-sm font-medium text-brand-900">
@@ -131,7 +133,9 @@ const statusLabel = (status) =>
                                 }}
                             </p>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div
+                            class="flex w-full items-center justify-between gap-3 sm:w-auto"
+                        >
                             <span
                                 class="px-2 py-1 rounded-full text-[11px] font-medium capitalize"
                                 :class="statusColor(order.status)"
@@ -176,7 +180,7 @@ const statusLabel = (status) =>
                         v-for="variant in lowStockVariants"
                         :key="variant.id"
                         :href="route('admin.products.edit', variant.product_id)"
-                        class="flex items-center justify-between px-5 py-3 hover:bg-brand-50/30 transition-colors"
+                        class="flex flex-wrap items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-brand-50/30"
                     >
                         <div class="flex items-center gap-3">
                             <div

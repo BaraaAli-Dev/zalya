@@ -11,6 +11,7 @@ const unreadCount = ref(0);
 const locale = ref(usePage().props.locale || "ar");
 const notificationsOpen = ref(false);
 const notificationsWrapper = ref(null);
+const mobileMenuOpen = ref(false);
 
 const switchLocale = () => {
     window.location.href = route(
@@ -79,19 +80,35 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex h-screen overflow-hidden bg-brand-50/20">
+    <div class="flex min-h-screen overflow-hidden bg-brand-50/20">
+        <div
+            v-if="mobileMenuOpen"
+            class="fixed inset-0 z-40 bg-black/40 lg:hidden"
+            @click="mobileMenuOpen = false"
+        ></div>
         <!-- Sidebar -->
         <aside
-            class="w-64 bg-brand-900 text-white p-6 flex flex-col overflow-y-auto"
+            class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-y-auto bg-brand-900 p-5 text-white transition-transform duration-200 lg:static lg:z-auto lg:w-64 lg:translate-x-0 lg:p-6"
+            :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'"
         >
-            <h2 class="text-xl font-bold mb-10 text-brand-50">
-                <img
-                    :src="logo"
-                    alt="Zalya Logo"
-                    class="h-10 w-10 inline-block mr-2"
-                />
-                لوحة تحكم Zalya
-            </h2>
+            <div class="mb-8 flex items-center justify-between lg:mb-10">
+                <h2 class="text-lg font-bold text-brand-50 sm:text-xl">
+                    <img
+                        :src="logo"
+                        alt="Zalya Logo"
+                        class="h-10 w-10 inline-block mr-2"
+                    />
+                    لوحة تحكم Zalya
+                </h2>
+                <button
+                    type="button"
+                    class="rounded-md p-2 text-brand-100 hover:bg-brand-800 lg:hidden"
+                    aria-label="إغلاق القائمة"
+                    @click="mobileMenuOpen = false"
+                >
+                    <span class="text-xl leading-none">×</span>
+                </button>
+            </div>
 
             <nav class="space-y-1 flex-1">
                 <Link
@@ -104,6 +121,7 @@ onUnmounted(() => {
                             ? 'bg-brand-700 text-white font-medium'
                             : 'text-brand-100 hover:bg-brand-800 hover:text-white'
                     "
+                    @click="mobileMenuOpen = false"
                 >
                     {{ link.label }}
                 </Link>
@@ -114,20 +132,40 @@ onUnmounted(() => {
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
             <header
-                class="bg-white shadow-sm border-b border-brand-100 p-4 flex justify-between items-center flex-shrink-0"
+                class="flex flex-wrap items-center justify-between gap-3 border-b border-brand-100 bg-white p-3 shadow-sm sm:p-4"
             >
-                <h1 class="text-lg font-semibold text-brand-700">
-                    <img
-                        :src="logo"
-                        alt="Zalya Logo"
-                        class="h-10 w-10 inline-block mr-2"
-                    />
-                    مرحبًا، {{ page.props.auth.admin?.name ?? "المسؤول" }}!
-                </h1>
+                <div class="flex min-w-0 items-center gap-2">
+                    <button
+                        type="button"
+                        class="rounded-md p-2 text-brand-700 hover:bg-brand-50 lg:hidden"
+                        aria-label="فتح القائمة"
+                        @click="mobileMenuOpen = true"
+                    >
+                        <svg
+                            class="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h1
+                        class="truncate text-base font-semibold text-brand-700 sm:text-lg"
+                    >
+                        <img
+                            :src="logo"
+                            alt="Zalya Logo"
+                            class="h-10 w-10 inline-block mr-2"
+                        />
+                        مرحبًا، {{ page.props.auth.admin?.name ?? "المسؤول" }}!
+                    </h1>
+                </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 sm:gap-4">
                     <button
                         type="button"
                         @click="switchLocale"
@@ -171,7 +209,7 @@ onUnmounted(() => {
 
                         <div
                             v-show="notificationsOpen"
-                            class="absolute right-0 mt-2 w-80 bg-white border border-brand-100 rounded-xl shadow-xl z-50 overflow-hidden"
+                            class="absolute right-0 mt-2 z-50 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-brand-100 bg-white shadow-xl"
                         >
                             <div
                                 class="flex items-center justify-between px-4 py-3 border-b border-brand-100"
@@ -355,7 +393,7 @@ onUnmounted(() => {
                 </div>
             </header>
 
-            <main class="p-6 flex-1 overflow-y-auto">
+            <main class="min-w-0 flex-1 overflow-y-auto p-3 sm:p-6">
                 <FlashMessage />
                 <slot />
             </main>

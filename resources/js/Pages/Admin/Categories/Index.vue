@@ -30,9 +30,9 @@ const deleteCategory = (category) => {
 
         <!-- Table -->
         <div
-            class="bg-white rounded-lg shadow-sm border border-brand-100 overflow-hidden"
+            class="overflow-x-auto rounded-lg border border-brand-100 bg-white shadow-sm"
         >
-            <table class="w-full text-left">
+            <table class="w-full min-w-[640px] text-left">
                 <thead class="bg-brand-50/50 text-brand-900 text-sm">
                     <tr>
                         <th class="px-6 py-3 font-semibold">#</th>
